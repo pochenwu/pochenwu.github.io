@@ -8,62 +8,89 @@ body {
   display: flex;
 }
 
-#container {
+#app {
   overflow: hidden;
   height: 100%;
   width: 100%;
-  background: #e3e3e3;
+  background: linear-gradient(to top, #F4F7FB , #FFFFFF);
   margin: auto;
   display: flex;
   flex-direction: column;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
 }
 
 #nav {
   display: flex;
   justify-content: space-between;
-  margin-left: 10px;
-  margin-right: 10px;
-  min-height: 64px;
+  align-items: center;
+  height: 9%;
 }
 
 .nav-item {
-
+  text-align: center;
+  vertical-align: middle;
 }
 
 #profile {
-  display: flex;
-  flex: 1;
-  margin-left: 10px;
-  margin-right: 10px;
+  position: relative;
+  height: 79%;
+  width: 100%;
+}
+
+.profile-card-wrapper {
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
 .profile-card {
   /* For Draggable */
   position: relative;
-  /*height: 100%;
-  width: 100%;*/
-  flex: 1;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background-image: url("../assets/imgs/p1.jpg");
   background-size: cover;
-  border-radius: 10px;
+  border-radius: 20px;
   color: #ffffff;
+  box-shadow: 0 4px 20px #C5C5C5;
 }
 
-.profile-card h4, h5 {
+.profile-caption h4 {
   margin: 0;
+  font-size: 3.5em;
+}
+
+.profile-caption h5 {
+  margin: 0;
+  font-size: 2.5em;
+  font-weight: normal;
 }
 
 .profile-caption {
-  margin: 20px;
+  border-radius: 20px;
+  background: linear-gradient(to top, rgba(35,35,35,1), rgba(255,0,0,0));
+  padding: 5.5%;
 }
 
 #bot-nav {
   display: flex;
   justify-content: space-between;
-  margin-left: 10px;
-  margin-right: 10px;
-  min-height: 64px;
+  align-items: center;
+  height: 12%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.bot-nav-item {
+  border-radius: 50px;
+  text-align: center;
+  vertical-align: middle;
+  background: #FFFFFF;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  box-shadow: 0 0px 24px #EEEEEE;
 }
