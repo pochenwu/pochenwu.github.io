@@ -28,7 +28,12 @@
     </div>
 
     <div id="profile">
-      <div class="profile-card" onmousedown='drag.startMoving(this,"profile",event);' onmouseup='drag.stopMoving("profile");'>
+      <div class="profile-card"
+           ontouchstart='drag.ontouchstart(this, "profile", event);'
+           ontouchend='drag.ontouchend("profile");'
+           onmousedown='drag.onmousedown(this, "profile", event);'
+           onmouseup='drag.onmouseup("profile");'
+      >
         <div class="profile-caption">
           <h4>Po-Chen, 23</h4>
           <h5>University of Texas, BA, CS</h5>
