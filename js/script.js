@@ -69,7 +69,7 @@ var drag = function() {
     ontouchend : function(container) {
       var a = document.createElement('script');
       document.getElementById(container).style.cursor='default';
-      document.ontouchend = function() {}
+      document.ontouchmove = function() {}
     },
   }
 } ();
