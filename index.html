@@ -8,9 +8,11 @@
   <meta name="description" content="Po-Chen Darren Wu">
   <meta name="author" content="Po-Chen Darren Wu">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
 
-  <script src="anime.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./css/index.css">
+  <script src="./js/anime.min.js"></script>
+  <script src="./js/script.js"></script>
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -18,7 +20,29 @@
 </head>
 
 <body>
-  Hello World
+  <div id="container">
+    <div id="nav">
+      <div class="nav-item">Left</div>
+      <div class="nav-item">Logo</div>
+      <div class="nav-item">Contact</div>
+    </div>
+
+    <div id="profile">
+      <div class="profile-card" onmousedown='drag.startMoving(this,"profile",event);' onmouseup='drag.stopMoving("profile");'>
+        <div class="profile-caption">
+          <h4>Po-Chen, 23</h4>
+          <h5>University of Texas, BA, CS</h5>
+        </div>
+      </div>
+    </div>
+
+    <div id="bot-nav">
+      <div class="nav-item">Git</div>
+      <div class="nav-item">Left</div>
+      <div class="nav-item">Next</div>
+      <div class="nav-item">Blog</div>
+    </div>
+  </div>
   <!-- <script src="js/scripts.js"></script> -->
 </body>
 </html>
