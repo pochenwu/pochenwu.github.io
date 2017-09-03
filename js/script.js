@@ -57,6 +57,8 @@ var drag = function() {
       var diffX = posX - divLeft,
           diffY = posY - divTop;
       document.ontouchmove = function(e) {
+        // e.preventDefault();
+        e.stopPropagation()
         e = e || window.event;
         var touch = e.changedTouches[0];
         var posX = touch.clientX,
