@@ -31,10 +31,7 @@
       <div class="nav-item">Contact</div>
     </div>
 
-    <div id="profile">
-      <!-- <profile-card :card="card[cardIndex + 1]"></profile-card> -->
-      <profile-card :card="card[cardIndex]"></profile-card>
-    </div>
+    <profile :cards="cards" :card-index="cardIndex"></profile>
 
     <div id="bot-nav">
       <div class="bot-nav-item">Git</div>
