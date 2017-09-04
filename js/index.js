@@ -46,21 +46,17 @@ window.addEventListener('load', function () {
     console.log('Tapped.')
   });
 
+  var moveAnime;
+
   currentCardTM.on("panmove", function(e) {
-    console.log('Pan moving')
-    anime({
-      targets: currentCard,
-      translateX: e.deltaX,
-      translateY: e.deltaY,
-      duration: 100,
-    });
+    currentCard.style.transitionDuration = '0ms';
+    currentCard.style.transform = "translate(" + e.deltaX + "px," + e.deltaY + "px)";
   });
 
   currentCardTM.on("panend", function(e) {
-    anime({
-      targets: currentCard,
-      translateX: 0,
-      translateY: 0,
-    });
+    console.log('velocity', e.velocity)
+    currentCard.style.transitionDuration = '200ms';
+    currentCard.style.transitionTimingFunction = 'ease-in-out';
+    currentCard.style.transform = "translate(0, 0)";
   })
 })
