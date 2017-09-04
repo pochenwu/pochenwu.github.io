@@ -77,25 +77,27 @@ body {
   padding: 5.5%;
 }
 
-#next-card .profile-card {
-}
-
 #bot-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 12%;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .bot-nav-item {
-  border-radius: 50px;
-  text-align: center;
-  vertical-align: middle;
-  background: #FFFFFF;
-  width: 3em;
-  height: 3em;
-  line-height: 3em;
+  background-color: #FFFFFF;
   box-shadow: 0 0px 24px #EEEEEE;
+}
+
+.bot-nav-item:nth-child(even){
+}
+
+button:hover {
+  style: none;
+}
+
+button:active {
+  style: none;
 }
