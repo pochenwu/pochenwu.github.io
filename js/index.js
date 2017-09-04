@@ -18,7 +18,12 @@ Vue.component('profile-card', {
 
 
 // Main app logics
-window.addEventListener('load', function () {
+window.addEventListener('load', function() {
+  // Hide address bar; timeout required on iPhone
+	setTimeout(function() {
+		window.scrollTo(0, 1);
+	}, 0);
+
   var app = new Vue({
     el: '#app',
     data: {
@@ -38,7 +43,7 @@ window.addEventListener('load', function () {
       // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
       [ Hammer.Tap ],
       [ Hammer.Swipe ],
-      [ Hammer.Pan ]
+      [ Hammer.Pan, {threshold: 1.5} ]
     ]
   });
 
@@ -49,7 +54,10 @@ window.addEventListener('load', function () {
   var moveAnime;
 
   currentCardTM.on("panmove", function(e) {
-    var rotate = Math.sin((e.angle - 90) * Math.PI / 180);
+    // Adjust the degree so we have 0deg pointing South.
+    // Convert to radians and use the Sine function to neutralize
+    // negative degrees as well as manage magnitude
+    var rotate = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
     console.log('angle', e.angle - 90, rotate)
     currentCard.style.transitionDuration = '0ms';
     currentCard.style.transform = "rotate(" + rotate + "deg)";
@@ -57,9 +65,16 @@ window.addEventListener('load', function () {
   });
 
   currentCardTM.on("panend", function(e) {
-    console.log('velocity', e.velocity)
-    currentCard.style.transition= "all 350ms cubic-bezier(0.6, 0.2, 0.6, 1.6)";
-    currentCard.style.transform = "translate(0, 0)";
 
+    console.log('velocity', e.velocity)
+    console.log('destance', e.distance)
+    if (e.velocity > 1.75 && e.distance > 100 || e.distance > 200) {
+
+    } else if (e.velocity < -1.75 && e.distance > 100  || e.distance > 200) {
+      console.log('swipe out')
+    } else {
+      currentCard.style.transition= "all 350ms cubic-bezier(0.6, 0.2, 0.6, 1.6)";
+      currentCard.style.transform = "translate(0, 0)";
+    }
   })
 })

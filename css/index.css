@@ -60,13 +60,13 @@ body {
 
 .profile-caption h4 {
   margin: 0;
-  font-size: 3.5em;
+  font-size: 1.75em;
 }
 
 .profile-caption h5 {
   margin: 0;
-  font-size: 2.5em;
-  font-weight: normal;
+  font-size: 1.25em;
+  font-weight: lighter;
 }
 
 .profile-caption {
