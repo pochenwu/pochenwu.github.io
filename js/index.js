@@ -49,14 +49,17 @@ window.addEventListener('load', function () {
   var moveAnime;
 
   currentCardTM.on("panmove", function(e) {
+    var rotate = Math.sin((e.angle - 90) * Math.PI / 180);
+    console.log('angle', e.angle - 90, rotate)
     currentCard.style.transitionDuration = '0ms';
-    currentCard.style.transform = "translate(" + e.deltaX + "px," + e.deltaY + "px)";
+    currentCard.style.transform = "rotate(" + rotate + "deg)";
+    currentCard.style.transform += "translate(" + e.deltaX + "px," + e.deltaY + "px)";
   });
 
   currentCardTM.on("panend", function(e) {
     console.log('velocity', e.velocity)
-    currentCard.style.transitionDuration = '200ms';
-    currentCard.style.transitionTimingFunction = 'ease-in-out';
+    currentCard.style.transition= "all 350ms cubic-bezier(0.6, 0.2, 0.6, 1.6)";
     currentCard.style.transform = "translate(0, 0)";
+
   })
 })
