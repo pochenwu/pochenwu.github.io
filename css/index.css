@@ -40,6 +40,7 @@ body {
 
 .profile-card-wrapper {
   position: absolute;
+  display: flex;
   height: 100%;
   width: 100%;
 }
@@ -47,8 +48,7 @@ body {
 .profile-card {
   /* For Draggable */
   position: relative;
-  top: 0;
-  left: 0;
+  margin: auto;
   height: 100%;
   width: 100%;
   display: flex;
@@ -75,6 +75,9 @@ body {
   border-radius: 20px;
   background: linear-gradient(to top, rgba(35,35,35,1), rgba(255,0,0,0));
   padding: 5.5%;
+}
+
+#next-card .profile-card {
 }
 
 #bot-nav {
