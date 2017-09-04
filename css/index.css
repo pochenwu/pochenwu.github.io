@@ -27,7 +27,7 @@ body {
   height: 9%;
 }
 
-.nav-item {
+.top-nav-item {
   text-align: center;
   vertical-align: middle;
 }
@@ -89,16 +89,19 @@ body {
 .bot-nav-item {
   background-color: #FFFFFF;
   box-shadow: 0 0px 24px #EEEEEE;
+  border: none;
 }
 
 .bot-nav-item:nth-child(even){
 }
 
-button:hover {
-  style: none;
+.bot-nav-item:visited {
+  background-color: #FFFFFF;
 }
 
-button:active {
+.bot-nav-item:active {
   transition: scale 500ms ease-in;
   transform: scale(.8);
+  background-color: #FFFFFF;
+  border: none;
 }

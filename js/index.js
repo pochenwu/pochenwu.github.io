@@ -1,8 +1,10 @@
 // Components
 Vue.component('profile-card', {
   props: ['card'],
-  data: {
-    clicked: false
+  data: function () {
+    return {
+      open: false,
+    }
   },
   template: `
     <div class="profile-card-wrapper">
