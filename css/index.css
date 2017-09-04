@@ -99,5 +99,6 @@ button:hover {
 }
 
 button:active {
-  style: none;
+  transition: scale 500ms ease-in;
+  transform: scale(.8);
 }
