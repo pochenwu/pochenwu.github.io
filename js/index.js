@@ -19,11 +19,6 @@ Vue.component('profile-card', {
 
 // Main app logics
 window.addEventListener('load', function() {
-  // Hide address bar; timeout required on iPhone
-	setTimeout(function() {
-		window.scrollTo(0, 1);
-	}, 0);
-
   var app = new Vue({
     el: '#app',
     data: {
