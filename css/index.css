@@ -38,14 +38,21 @@ body {
   width: 100%;
 }
 
-.profile-card-wrapper {
+.profile-card {
   position: absolute;
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
 }
 
-.profile-card {
+.profile-card-open {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.profile-pic {
   /* For Draggable */
   position: relative;
   margin: auto;
@@ -55,9 +62,25 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   background-size: cover;
+  background-position: center;
   border-radius: 20px;
   color: #ffffff;
   box-shadow: 0 4px 20px #C5C5C5;
+}
+
+.profile-pic-open {
+  /*margin: 0;*/
+  /*width: 100%;
+  height: 500px;
+  /*padding-top: 100%;*/
+  /*border-radius: 0;
+  font-size: 0;
+  box-shadow: none;*/
+}
+
+.profile-content {
+  flex: 1;
+  background: white;
 }
 
 .profile-caption h4 {
@@ -75,6 +98,10 @@ body {
   border-radius: 20px;
   background: linear-gradient(to top, rgba(35,35,35,1), rgba(0,0,0,0));
   padding: 5.5%;
+}
+
+#next-card {
+  visibility: hidden;
 }
 
 #bot-nav {

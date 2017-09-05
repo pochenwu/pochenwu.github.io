@@ -1,31 +1,30 @@
 // Components
 Vue.component('profile-card', {
-  props: ['card'],
-  data: function () {
-    return {
-      open: false,
-    }
-  },
+  props: ['card', 'isCardOpen'],
   template: `
-    <div class="profile-card-wrapper">
+    <div class="profile-card" :class="{ 'profile-card-open': isCardOpen }">
       <div :style="{ backgroundImage: 'url(' + card.imgSrc + ')' }"
-        class="profile-card"
+        class="profile-pic"
+        :class="{ 'profile-pic-open': isCardOpen }"
       >
-        <div class="profile-caption">
+        <div v-if="!isCardOpen" class="profile-caption">
           <h4>{{ card.name }}</h4>
           <h5>{{ card.subtitle }}</h5>
         </div>
+      </div>
+      <div v-if="isCardOpen" class="profile-content"">
+        Content goes here.
       </div>
     </div>
   `
 })
 
 Vue.component('profile', {
-  props: ['cards', 'cardIndex'],
+  props: ['cards', 'cardIndex', 'isCardOpen'],
   template: `
     <div id="profile">
-      <profile-card v-if="cardIndex + 1 < cards.length" :card="cards[cardIndex + 1]" id="next-card"></profile-card>
-      <profile-card v-if="cardIndex < cards.length" :card="cards[cardIndex]" id="current-card"></profile-card>
+      <profile-card v-if="cardIndex + 1 < cards.length" :card="cards[cardIndex + 1]" :is-card-open="false" id="next-card"></profile-card>
+      <profile-card v-if="cardIndex < cards.length" :card="cards[cardIndex]" :is-card-open=isCardOpen id="current-card"></profile-card>
       <div v-if="cardIndex === cards.length">There is no more card. It's a match? ;)</div>
     </div>
   `
@@ -36,6 +35,7 @@ window.addEventListener('load', function() {
   var app = new Vue({
     el: '#app',
     data: {
+      isCardOpen: false,
       cardIndex: 0,
       cards: [
         { imgSrc: './assets/imgs/p1.jpg', name: 'Po-Chen, 23', subtitle: 'University of Texas at Austin' },
@@ -47,7 +47,15 @@ window.addEventListener('load', function() {
       showNextCard: function () {
         this.cardIndex++;
         console.log('Show next card', this.cardIndex);
-      }
+      },
+      openCard: function () {
+        this.isCardOpen = true;
+        console.log('Card is now', this.isCardOpen)
+      },
+      closeCard: function () {
+        this.isCardOpen = false;
+        console.log('Card is now', this.isCardOpen)
+      },
     }
   })
 
@@ -63,8 +71,94 @@ window.addEventListener('load', function() {
     ]
   });
 
+  var toggle = false;
+
   currentCardTM.on("tap", function() {
-    console.log('Tapped.')
+
+      var pic = currentCard.children[0];
+      var appDimentionSnapshot = app.$el.getClientRects()[0]
+      var profileDimentionSnapshot = document.getElementById('profile'). getClientRects()[0]
+      var expandAnime = anime({
+        targets: pic,
+        height: appDimentionSnapshot.width,
+        borderRadius: { value: 0, duration: 1 },
+        fontSize: 0,
+        easing: 'easeInQuad',
+        duration: 200,
+        autoplay: false,
+        // boxShadow: 'none',
+        complete: function () {
+          pic.style.height = 'auto';
+          pic.style.paddingTop = '100%';
+            // margin: 0,
+            // height: 'auto',
+            // paddingTop: '100%',
+            // borderRadius: 0,
+            // fontSize: 0,
+            // boxShadow: 'none',
+        },
+        update: function () {
+          console.log('UPDATING HEIGHT', pic.style.height)
+          console.log('UPDATING MARGIN', pic.style.margin)
+        },
+        before: function () {
+          console.log('BEFORE HEIGHT', pic.style.height)
+          console.log('BEFORE MARGIN', pic.style.margin)
+
+          // pic.style.height = appDimentionSnapshot.width + 'px';
+        },
+        // complete: function () {
+        //   pic.style.height = '100%';
+        // }
+      });
+
+      console.log(profileDimentionSnapshot.height)
+
+      var retractAnime = anime({
+        margin: { value:0, duration: 0 },
+        targets: pic,
+        height: [
+          { value: appDimentionSnapshot.width, duration: 0, delay: 0, elasticity: 0 },
+          { value: profileDimentionSnapshot.height, delay: 0, elasticity: 0 }
+
+        ],
+        borderRadius: { value: 20, duration: 1 },
+        fontSize: 0,
+        easing: 'easeInQuad',
+        duration: 200,
+        autoplay: false,
+        // boxShadow: 'none',
+        update: function () {
+          console.log('UPDATING HEIGHT', pic.style.height)
+          console.log('UPDATING MARGIN', pic.style.margin)
+        },
+        before: function () {
+          console.log('BEFORE HEIGHT', pic.style.height)
+          console.log('BEFORE MARGIN', pic.style.margin)
+
+          // pic.style.height = appDimentionSnapshot.width + 'px';
+        },
+        complete: function () {
+          pic.style.height = '100%';
+        }
+      });
+    if (!toggle) {
+      app.openCard()
+      expandAnime.play()
+      toggle = !toggle;
+    } else {
+      console.log('before close', pic.style.height)
+      pic.style.height = appDimentionSnapshot.width + 'px';
+      pic.style.margin = 0;
+      pic.style.padding = 0;
+      app.closeCard()
+      // console.log('close card', pic.style.height)
+      // pic.style.height = appDimentionSnapshot.width + 'px';
+      // pic.style.paddingTop = '0';
+      // console.log('before animation call', pic.style.height)
+      retractAnime.play()
+      toggle = !toggle;
+    }
   });
 
   currentCardTM.on("panmove", function(e) {
@@ -74,6 +168,8 @@ window.addEventListener('load', function() {
     var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
     currentCard.style.transition = "rotate 200ms ease-in";
     currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
+
+    nextCard.style.visibility = "visible";
   });
 
   currentCardTM.on("panend", function(e) {
@@ -95,6 +191,7 @@ window.addEventListener('load', function() {
       elasticity: 0,
       autoplay: false,
       complete: function() {
+        app.closeCard()
         app.showNextCard()
         currentCard.style.transition = "translate 0ms linear"
         currentCard.style.transform = "translate(0, 0)";
@@ -115,7 +212,10 @@ window.addEventListener('load', function() {
       rotate: { value: 0, duration: 5 },
       duration: 300,
       elasticity: 10,
-      autoplay: false
+      autoplay: false,
+      complete: function() {
+        nextCard.style.visibility = "hidden";
+      }
     });
 
     console.log('velocity', e.velocity)
@@ -150,7 +250,7 @@ window.addEventListener('load', function() {
 
 var previewAnimation = function(target, dist, reverse) {
   // Preview animation of the next card
-  var dynamicSize = Math.max('.975', Math.min(1, .975 + dist / 1000));
+  var dynamicSize = Math.max('.95', Math.min(1, .95 + dist / 1000));
   target.style.transform = "scale(" + dynamicSize + ")"
 }
 
