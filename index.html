@@ -29,12 +29,13 @@
 
 <body>
   <div id="app">
-    <div id="nav">
+    <div id="top-nav">
       <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-user"></i></button>
       <i class="fa fa-google-wallet" style="color: #1A62B6; font-size: 2em"></i>
       <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-comments"></i></button>
     </div>
 
+    <div id="shadow-profile"></div>
     <profile :cards="cards" :card-index="cardIndex" :is-card-open="isCardOpen"></profile>
 
     <div id="bot-nav">

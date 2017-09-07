@@ -12,9 +12,6 @@ Vue.component('profile-card', {
           <h5>{{ card.subtitle }}</h5>
         </div>
       </div>
-      <div v-if="isCardOpen" class="profile-content"">
-        Content goes here.
-      </div>
     </div>
   `
 })
@@ -22,20 +19,27 @@ Vue.component('profile-card', {
 Vue.component('profile', {
   props: ['cards', 'cardIndex', 'isCardOpen'],
   template: `
-    <div id="profile">
+    <div id="profile" :style="profileModalToggle">
       <profile-card v-if="cardIndex + 1 < cards.length" :card="cards[cardIndex + 1]" :is-card-open="false" id="next-card"></profile-card>
       <profile-card v-if="cardIndex < cards.length" :card="cards[cardIndex]" :is-card-open=isCardOpen id="current-card"></profile-card>
       <div v-if="cardIndex === cards.length">There is no more card. It's a match? ;)</div>
     </div>
-  `
+  `,
+  computed: {
+    profileModalToggle: function () {
+      // return  this.isCardOpen ? { position: 'static' } : { position: 'relative' };
+      return this.isCardOpen ? { marginLeft : 0, marginRight: 0, top: 0, width: '100%' } : {}
+    }
+  }
 })
 
 // Main app logics
 window.addEventListener('load', function() {
+  var isCardOpen = false;
   var app = new Vue({
     el: '#app',
     data: {
-      isCardOpen: false,
+      isCardOpen: isCardOpen,
       cardIndex: 0,
       cards: [
         { imgSrc: './assets/imgs/p1.jpg', name: 'Po-Chen, 23', subtitle: 'University of Texas at Austin' },
@@ -49,19 +53,24 @@ window.addEventListener('load', function() {
         console.log('Show next card', this.cardIndex);
       },
       openCard: function () {
-        this.isCardOpen = true;
+        isCardOpen = !isCardOpen;
+        this.isCardOpen = isCardOpen;
         console.log('Card is now', this.isCardOpen)
       },
       closeCard: function () {
-        this.isCardOpen = false;
+        isCardOpen = !isCardOpen;
+        this.isCardOpen = isCardOpen;
         console.log('Card is now', this.isCardOpen)
       },
     }
   })
 
   // Touch and Animation Control
+  // DOM references
+  var profile = document.getElementById('profile')
   var currentCard = document.getElementById('current-card');
   var nextCard = document.getElementById('next-card');
+  var profilePic = currentCard.children[0]
 
   var currentCardTM = new Hammer.Manager(currentCard, {recognizers: [
       // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
@@ -71,91 +80,46 @@ window.addEventListener('load', function() {
     ]
   });
 
-  var toggle = false;
-
   currentCardTM.on("tap", function() {
+    // Snapshots
+    var appDimentionSnapshot = app.$el.getClientRects()[0]
+    var profileDimentionSnapshot = profile.getClientRects()[0]
 
-      var pic = currentCard.children[0];
-      var appDimentionSnapshot = app.$el.getClientRects()[0]
-      var profileDimentionSnapshot = document.getElementById('profile'). getClientRects()[0]
-      var expandAnime = anime({
-        targets: pic,
-        height: appDimentionSnapshot.width,
-        borderRadius: { value: 0, duration: 1 },
-        easing: 'easeInOutCubic',
-        duration: 200,
-        autoplay: false,
-        // boxShadow: 'none',
-        complete: function () {
-          pic.style.height = 'auto';
-          pic.style.paddingTop = '100%';
-            // margin: 0,
-            // height: 'auto',
-            // paddingTop: '100%',
-            // borderRadius: 0,
-            // fontSize: 0,
-            // boxShadow: 'none',
-        },
-        update: function () {
-          console.log('UPDATING HEIGHT', pic.style.height)
-          console.log('UPDATING MARGIN', pic.style.margin)
-        },
-        before: function () {
-          console.log('BEFORE HEIGHT', pic.style.height)
-          console.log('BEFORE MARGIN', pic.style.margin)
+    profilePic.addEventListener('transitionend', function(e) {
+      console.log(e, 'zoom endded.')
+      if (isCardOpen) {
+        profilePic.style.transition = 'unset';
+        profilePic.style.height = 'auto';
+        profilePic.style.paddingTop = '100%';
+      }
+    })
 
-          // pic.style.height = appDimentionSnapshot.width + 'px';
-        },
-        // complete: function () {
-        //   pic.style.height = '100%';
-        // }
-      });
+    var zoomIn = {
+      play: function () {
+        console.log('Zooming in.')
+        profilePic.style.height = appDimentionSnapshot.width + 'px';
+        profilePic.style.borderRadius = 0;
+      }
+    }
 
-      console.log(profileDimentionSnapshot.height)
+    var zoomOut = {
+      play: function () {
+        console.log('Zooming out.')
+        profilePic.style.height = appDimentionSnapshot.width + 'px';
+        profilePic.style.paddingTop = '0';
 
-      var retractAnime = anime({
-        margin: { value:0, duration: 0 },
-        targets: pic,
-        height: [
-          { value: appDimentionSnapshot.width, duration: 0, delay: 0, elasticity: 0 },
-          { value: profileDimentionSnapshot.height, delay: 0, elasticity: 0 }
+        profilePic.style.transition = 'all 200ms';
+        profilePic.style.height = '100%';
+        profilePic.style.borderRadius = '20px';
+      }
+    }
 
-        ],
-        borderRadius: { value: 20, duration: 1 },
-        easing: 'easeInOutCubic',
-        duration: 200,
-        autoplay: false,
-        // boxShadow: 'none',
-        update: function () {
-          console.log('UPDATING HEIGHT', pic.style.height)
-          console.log('UPDATING MARGIN', pic.style.margin)
-        },
-        before: function () {
-          console.log('BEFORE HEIGHT', pic.style.height)
-          console.log('BEFORE MARGIN', pic.style.margin)
-
-          // pic.style.height = appDimentionSnapshot.width + 'px';
-        },
-        complete: function () {
-          pic.style.height = '100%';
-        }
-      });
-    if (!toggle) {
+    if (!isCardOpen) {
       app.openCard()
-      expandAnime.play()
-      toggle = !toggle;
+      zoomIn.play()
     } else {
-      console.log('before close', pic.style.height)
-      pic.style.height = appDimentionSnapshot.width + 'px';
-      pic.style.margin = 0;
-      pic.style.padding = 0;
       app.closeCard()
-      // console.log('close card', pic.style.height)
-      // pic.style.height = appDimentionSnapshot.width + 'px';
-      // pic.style.paddingTop = '0';
-      // console.log('before animation call', pic.style.height)
-      retractAnime.play()
-      toggle = !toggle;
+      zoomOut.play()
     }
   });
 
