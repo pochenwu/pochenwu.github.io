@@ -53,12 +53,12 @@ window.addEventListener('load', function() {
         console.log('Show next card', this.cardIndex);
       },
       openCard: function () {
-        isCardOpen = !isCardOpen;
+        isCardOpen = true;
         this.isCardOpen = isCardOpen;
         console.log('Card is now', this.isCardOpen)
       },
       closeCard: function () {
-        isCardOpen = !isCardOpen;
+        isCardOpen = false;
         this.isCardOpen = isCardOpen;
         console.log('Card is now', this.isCardOpen)
       },
@@ -86,8 +86,8 @@ window.addEventListener('load', function() {
     var profileDimentionSnapshot = profile.getClientRects()[0]
 
     profilePic.addEventListener('transitionend', function(e) {
-      console.log(e, 'zoom endded.')
       if (isCardOpen) {
+        // Zoom In Resets
         profilePic.style.transition = 'unset';
         profilePic.style.height = 'auto';
         profilePic.style.paddingTop = '100%';
@@ -97,18 +97,23 @@ window.addEventListener('load', function() {
     var zoomIn = {
       play: function () {
         console.log('Zooming in.')
+        // Obejectives
         profilePic.style.height = appDimentionSnapshot.width + 'px';
         profilePic.style.borderRadius = 0;
+        profilePic.style.boxShadow = 'none';
       }
     }
 
     var zoomOut = {
       play: function () {
         console.log('Zooming out.')
+        // Initial state
         profilePic.style.height = appDimentionSnapshot.width + 'px';
         profilePic.style.paddingTop = '0';
-
-        profilePic.style.transition = 'all 200ms';
+        // Resets
+        profilePic.style.boxShadow = '';
+        profilePic.style.transition = '';
+        // Obejectives
         profilePic.style.height = '100%';
         profilePic.style.borderRadius = '20px';
       }
@@ -195,7 +200,7 @@ window.addEventListener('load', function() {
   })
 
   // Preview Animation Event Listener
-  // TODO: make the evengt specific
+  // TODO: make the event specific
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutationRecord) {
       var transformValue = mutationRecord.target.style.transform

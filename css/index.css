@@ -68,7 +68,7 @@ body {
   border-radius: 20px;
   color: #ffffff;
   box-shadow: 0 4px 20px #C5C5C5;
-  transition: all 200ms;
+  transition: height 250ms, width 250ms, border-radius 250ms;
 }
 
 .profile-caption h4 {
@@ -84,7 +84,7 @@ body {
 
 .profile-caption {
   border-radius: 20px;
-  background: linear-gradient(to top, rgba(35,35,35,1), rgba(0,0,0,0));
+  background: linear-gradient(to top, rgba(35,35,35,.65), rgba(0,0,0,0));
   padding: 5.5%;
 }
 
