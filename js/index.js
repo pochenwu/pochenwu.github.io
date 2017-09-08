@@ -12,6 +12,10 @@ Vue.component('profile-card', {
           <h5>{{ card.subtitle }}</h5>
         </div>
       </div>
+      <div v-if="isCardOpen" class="profile-content">
+        <div>Basic Info</div>
+        <div>Details</div>
+      </div>
     </div>
   `
 })
@@ -28,7 +32,7 @@ Vue.component('profile', {
   computed: {
     profileModalToggle: function () {
       // return  this.isCardOpen ? { position: 'static' } : { position: 'relative' };
-      return this.isCardOpen ? { marginLeft : 0, marginRight: 0, top: 0, width: '100%' } : {}
+      return this.isCardOpen ? { marginLeft : 0, marginRight: 0, top: 0, width: '100%', height: '100%' } : {}
     }
   }
 })
@@ -72,7 +76,7 @@ window.addEventListener('load', function() {
   var nextCard = document.getElementById('next-card');
   var profilePic = currentCard.children[0]
 
-  var currentCardTM = new Hammer.Manager(currentCard, {recognizers: [
+  var profilePicTM = new Hammer.Manager(profilePic, {recognizers: [
       // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
       [ Hammer.Tap ],
       [ Hammer.Swipe ],
@@ -80,20 +84,23 @@ window.addEventListener('load', function() {
     ]
   });
 
-  currentCardTM.on("tap", function() {
+  profilePicTM.on("tap", function() {
     // Snapshots
     var appDimentionSnapshot = app.$el.getClientRects()[0]
     var profileDimentionSnapshot = profile.getClientRects()[0]
-
+    // Animation
     profilePic.addEventListener('transitionend', function(e) {
       if (isCardOpen) {
-        // Zoom In Resets
+        // Zoom In Responsive Resets
         profilePic.style.transition = 'unset';
         profilePic.style.height = 'auto';
         profilePic.style.paddingTop = '100%';
+      } else {
+        // Zoom Out Responsive Resets
+        profilePic.style.transition = 'unset';
+        profilePic.style.height = '100%';
       }
     })
-
     var zoomIn = {
       play: function () {
         console.log('Zooming in.')
@@ -103,7 +110,6 @@ window.addEventListener('load', function() {
         profilePic.style.boxShadow = 'none';
       }
     }
-
     var zoomOut = {
       play: function () {
         console.log('Zooming out.')
@@ -114,8 +120,8 @@ window.addEventListener('load', function() {
         profilePic.style.boxShadow = '';
         profilePic.style.transition = '';
         // Obejectives
-        profilePic.style.height = '100%';
         profilePic.style.borderRadius = '20px';
+        profilePic.style.height = appDimentionSnapshot.height * .79 + 'px';
       }
     }
 
@@ -128,18 +134,19 @@ window.addEventListener('load', function() {
     }
   });
 
-  currentCardTM.on("panmove", function(e) {
+  profilePicTM.on("panmove", function(e) {
     // Adjust the degree so we have 0deg pointing South.
     // Convert to radians and use the Sine function to neutralize
     // negative degrees as well as manage magnitude
     var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
     currentCard.style.transition = "rotate 200ms ease-in";
     currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
+    profilePic.style.boxShadow = 'none';
 
     nextCard.style.visibility = "visible";
   });
 
-  currentCardTM.on("panend", function(e) {
+  profilePicTM.on("panend", function(e) {
     var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
     // TODO: use edge coordinates instead of arbitrary values.
     // TODO: change duration based on velocity.
@@ -160,8 +167,11 @@ window.addEventListener('load', function() {
       complete: function() {
         app.closeCard()
         app.showNextCard()
-        currentCard.style.transition = "translate 0ms linear"
-        currentCard.style.transform = "translate(0, 0)";
+        // TODO make this a animition
+        profilePic.style.boxShadow = '';
+
+        currentCard.style.transform = '';
+        nextCard.style.visibility = '';
         console.log('Swipe Out Complete')
       }
     });
@@ -181,7 +191,8 @@ window.addEventListener('load', function() {
       elasticity: 10,
       autoplay: false,
       complete: function() {
-        nextCard.style.visibility = "hidden";
+        profilePic.style.boxShadow = '';
+        nextCard.style.visibility = '';
       }
     });
 
