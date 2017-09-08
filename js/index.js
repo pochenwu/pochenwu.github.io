@@ -1,20 +1,39 @@
 // Components
+// TODO: need to use table or something equilvalent for the subtitle icons
 Vue.component('profile-card', {
   props: ['card', 'isCardOpen'],
   template: `
     <div class="profile-card" :class="{ 'profile-card-open': isCardOpen }">
-      <div :style="{ backgroundImage: 'url(' + card.imgSrc + ')' }"
+      <div :style="{ backgroundImage: 'url(' + card.collage[0] + ')' }"
         class="profile-pic"
         :class="{ 'profile-pic-open': isCardOpen }"
       >
         <div v-if="!isCardOpen" class="profile-caption">
-          <h4>{{ card.name }}</h4>
-          <h5>{{ card.subtitle }}</h5>
+          <h1>{{ card.name }}, {{ card.age }}</h1>
+          <h2>{{ card.title }}</h2>
         </div>
       </div>
       <div v-if="isCardOpen" class="profile-content">
-        <div>Basic Info</div>
-        <div>Details</div>
+        <div class="profile-basic-info profile-content-item">
+          <h1>{{ card.name }}<span class="font-lighter">, {{ card.age }}</span></h1>
+          <div class="profile-basic-info-item">
+            <div class="profile-icon"><i class="fa fa-map-marker" aria-hidden="true" /></div>
+            <div class="profile-title"><h2>{{ card.title }}<span v-if="card.position">, {{ card.position }}</span></h2></div>
+          </div>
+          <div class="profile-basic-info-item">
+            <div class="profile-icon"><i class="fa fa-clock-o" aria-hidden="true" /></div>
+            <div><h2> {{ card.date }}</h2></div>
+          </div>
+        </div>
+        <hr class="divider-full">
+        <div class="profile-content-item">
+          <p v-if="card.message">{{ card.message }}</p>
+          <ul v-if="card.bullets" class="profile-bullets">
+            <li v-for="item in card.bullets">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   `
@@ -46,9 +65,41 @@ window.addEventListener('load', function() {
       isCardOpen: isCardOpen,
       cardIndex: 0,
       cards: [
-        { imgSrc: './assets/imgs/p1.jpg', name: 'Po-Chen, 23', subtitle: 'University of Texas at Austin' },
-        { imgSrc: './assets/imgs/p2.jpg', name: 'Po-Chen, 23', subtitle: 'WizeHire Inc.' },
-        { imgSrc: './assets/imgs/p3.jpg', name: 'Po-Chen, 23', subtitle: 'Studnet Conduct Board, Member.' }
+        { collage: ['./assets/imgs/p1.jpg'],
+          name: 'Po-Chen',
+          age: '23',
+          title: 'University of Texas at Austin',
+          position: "BA, Computer Sciense, 4.00",
+          class: 'education',
+          date: 'May 2018',
+          message: '',
+          bullets: [
+            'Focused on full-stack development for service oriented web apps.',
+            'Built an API-based infrastructure of push notification service using Socket.io.',
+            'Created a full-fledged live messenger system with direct email I/O support.',
+            'Designed comprehensive, responsive, and modulated email templates.',
+            'Prototyped a brand-new mobile experience with Material-UI.',
+            'Maintained and improved database performance.'
+          ],
+        },
+        { collage: ['./assets/imgs/p2.jpg'],
+          name: 'Po-Chen',
+          age: '23',
+          title: 'WizeHire Inc',
+          position: 'Software Engineering Intern',
+          class: 'internship',
+          message: 'Hello World',
+          date: 'May 2017 - Aug 2017'
+        },
+        { collage: ['./assets/imgs/p3.jpg'],
+          name: 'Po-Chen',
+          age: '23',
+          title: 'Studnet Conduct Board',
+          position: 'Member',
+          class: 'activity',
+          message: 'Hello World',
+          date: 'Fall 2017 - Current'
+        },
       ]
     },
     methods: {
@@ -89,25 +140,33 @@ window.addEventListener('load', function() {
     var appDimentionSnapshot = app.$el.getClientRects()[0]
     var profileDimentionSnapshot = profile.getClientRects()[0]
     // Animation
+    // BUG: card open vraibable no changing.
     profilePic.addEventListener('transitionend', function(e) {
+      console.log('Callback', isCardOpen)
       if (isCardOpen) {
         // Zoom In Responsive Resets
         profilePic.style.transition = 'unset';
         profilePic.style.height = 'auto';
         profilePic.style.paddingTop = '100%';
+        console.log('Zoom in callback completed.')
       } else {
         // Zoom Out Responsive Resets
+        // BUG this not beign fired
         profilePic.style.transition = 'unset';
-        profilePic.style.height = '100%';
+        profilePic.style.height = null;
+        currentCard.style.boxShadow = null;
+        console.log('Zoom out callback completed.', profilePic.style.height)
       }
     })
     var zoomIn = {
       play: function () {
         console.log('Zooming in.')
+        // Resets
+        profilePic.style.transition = null;
         // Obejectives
         profilePic.style.height = appDimentionSnapshot.width + 'px';
-        profilePic.style.borderRadius = 0;
-        profilePic.style.boxShadow = 'none';
+        currentCard.style.borderRadius = 0;
+        currentCard.style.boxShadow = 'none';
       }
     }
     var zoomOut = {
@@ -115,21 +174,22 @@ window.addEventListener('load', function() {
         console.log('Zooming out.')
         // Initial state
         profilePic.style.height = appDimentionSnapshot.width + 'px';
-        profilePic.style.paddingTop = '0';
+        profilePic.style.paddingTop = null;
         // Resets
-        profilePic.style.boxShadow = '';
-        profilePic.style.transition = '';
+        profilePic.style.transition = null;
         // Obejectives
-        profilePic.style.borderRadius = '20px';
+        currentCard.style.borderRadius = null;
         profilePic.style.height = appDimentionSnapshot.height * .79 + 'px';
       }
     }
 
     if (!isCardOpen) {
       app.openCard()
+      console.log(isCardOpen)
       zoomIn.play()
     } else {
       app.closeCard()
+      console.log(isCardOpen)
       zoomOut.play()
     }
   });
@@ -140,9 +200,9 @@ window.addEventListener('load', function() {
       // Convert to radians and use the Sine function to neutralize
       // negative degrees as well as manage magnitude
       var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
-      currentCard.style.transition = "rotate 200ms ease-in";
+      // currentCard.style.transition = "rotate 200ms ease-in";
       currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
-      profilePic.style.boxShadow = 'none';
+      currentCard.style.boxShadow = 'none';
 
       nextCard.style.visibility = "visible";
     }
@@ -157,24 +217,24 @@ window.addEventListener('load', function() {
         targets: currentCard,
         translateX: [
           { value: e.deltaX, duration: 0, delay: 0, elasticity: 0 },
-          { value: e.deltaX * 5, duration: 500, delay: 0, elasticity: 0 }
+          { value: e.deltaX * 5, duration: 250, delay: 0, elasticity: 0 }
         ],
         translateY: [
           { value: e.deltaY, duration: 0, delay: 0, elasticity: 0 },
-          { value: e.deltaY * 5, duration: 500, delay: 0, elasticity: 0 }
+          { value: e.deltaY * 5, duration: 250, delay: 0, elasticity: 0 }
         ],
         rotate: angle,
-        duration: 500,
+        duration: 250,
         elasticity: 0,
         autoplay: false,
         complete: function() {
           app.closeCard()
           app.showNextCard()
           // TODO make this a animition
-          profilePic.style.boxShadow = '';
+          profilePic.style.boxShadow = null;
 
-          currentCard.style.transform = '';
-          nextCard.style.visibility = '';
+          currentCard.style.transform = null;
+          nextCard.style.visibility = null;
           console.log('Swipe Out Complete')
         }
       });
@@ -194,8 +254,8 @@ window.addEventListener('load', function() {
         elasticity: 10,
         autoplay: false,
         complete: function() {
-          profilePic.style.boxShadow = '';
-          nextCard.style.visibility = '';
+          currentCard.style.boxShadow = null;
+          nextCard.style.visibility = null;
         }
       });
 
@@ -222,7 +282,7 @@ window.addEventListener('load', function() {
       var translateX = getComputedTranslate('X', mutationRecord.target);
       var translateY = getComputedTranslate('Y', mutationRecord.target);
       var dist = Math.sqrt( translateX * translateX + translateY * translateY);
-      previewAnimation(nextCard.children[0], dist)
+      previewAnimation(nextCard, dist)
     });
   });
 
@@ -258,4 +318,18 @@ function getComputedTranslate(coordinate, obj) {
   if(mat) return parseFloat(mat[1].split(', ')[index3D]);
   mat = transform.match(/^matrix\((.+)\)$/);
   return mat ? parseFloat(mat[1].split(', ')[index]) : 0;
+}
+
+function arrayToList(array) {
+  var list = '';
+  if (array.length > 0) {
+    list = document.createElement('ul');
+    for (var i in array) {
+      var il = document.createElement('il')
+      var t = document.createTextNode(array[i]);
+      il.appendChild(t)
+      list.appendChild(il)
+    }
+  }
+  return list;
 }
