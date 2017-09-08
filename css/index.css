@@ -75,6 +75,7 @@ body {
   color: #ffffff;
   box-shadow: 0 4px 20px #C5C5C5;
   transition: height 250ms, width 250ms, border-radius 250ms;
+  will-change: auto;
 }
 
 .profile-caption h4 {

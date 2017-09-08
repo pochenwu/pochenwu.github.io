@@ -18,7 +18,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-49.5%, -47%) scale(.685, .685);
+    transform: translate(-50%, -49.5%);
   }
 }
 
