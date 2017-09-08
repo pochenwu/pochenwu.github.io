@@ -3,6 +3,7 @@ html {
 }
 
 body {
+  overflow: hidden;
   background: whitesmoke;
   margin: 0;
   height: 100%;
@@ -12,6 +13,7 @@ body {
 #iphone-wrapper {
   position: absolute;
   visibility: hidden;
+  user-select: none;
 }
 
 #app {
@@ -52,6 +54,7 @@ body {
   margin-left: 2.5%;
   margin-right: 2.5%;
   transition: all 250ms;
+  will-change: margin;
 }
 
 .profile-card {
@@ -74,8 +77,8 @@ body {
   border-radius: 20px;
   color: #ffffff;
   box-shadow: 0 4px 20px #C5C5C5;
-  transition: height 250ms, width 250ms, border-radius 250ms;
-  will-change: auto;
+  transition: height 200ms, width 250ms, border-radius 250ms;
+  will-change: height, width, border-radius;
 }
 
 .profile-caption h4 {
@@ -99,7 +102,7 @@ body {
   flex: 1;
   background: white;
   transition: all 50ms;
-  padding: 5% 3% 0 3%;
+  padding: 5% 5% 0 5%;
 }
 
 #next-card {
