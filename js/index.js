@@ -135,78 +135,82 @@ window.addEventListener('load', function() {
   });
 
   profilePicTM.on("panmove", function(e) {
-    // Adjust the degree so we have 0deg pointing South.
-    // Convert to radians and use the Sine function to neutralize
-    // negative degrees as well as manage magnitude
-    var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
-    currentCard.style.transition = "rotate 200ms ease-in";
-    currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
-    profilePic.style.boxShadow = 'none';
+    if (!isCardOpen) {
+      // Adjust the degree so we have 0deg pointing South.
+      // Convert to radians and use the Sine function to neutralize
+      // negative degrees as well as manage magnitude
+      var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
+      currentCard.style.transition = "rotate 200ms ease-in";
+      currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
+      profilePic.style.boxShadow = 'none';
 
-    nextCard.style.visibility = "visible";
+      nextCard.style.visibility = "visible";
+    }
   });
 
   profilePicTM.on("panend", function(e) {
-    var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
-    // TODO: use edge coordinates instead of arbitrary values.
-    // TODO: change duration based on velocity.
-    var swipeOutAnime = anime({
-      targets: currentCard,
-      translateX: [
-        { value: e.deltaX, duration: 0, delay: 0, elasticity: 0 },
-        { value: e.deltaX * 5, duration: 500, delay: 0, elasticity: 0 }
-      ],
-      translateY: [
-        { value: e.deltaY, duration: 0, delay: 0, elasticity: 0 },
-        { value: e.deltaY * 5, duration: 500, delay: 0, elasticity: 0 }
-      ],
-      rotate: angle,
-      duration: 500,
-      elasticity: 0,
-      autoplay: false,
-      complete: function() {
-        app.closeCard()
-        app.showNextCard()
-        // TODO make this a animition
-        profilePic.style.boxShadow = '';
+    if (!isCardOpen) {
+      var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
+      // TODO: use edge coordinates instead of arbitrary values.
+      // TODO: change duration based on velocity.
+      var swipeOutAnime = anime({
+        targets: currentCard,
+        translateX: [
+          { value: e.deltaX, duration: 0, delay: 0, elasticity: 0 },
+          { value: e.deltaX * 5, duration: 500, delay: 0, elasticity: 0 }
+        ],
+        translateY: [
+          { value: e.deltaY, duration: 0, delay: 0, elasticity: 0 },
+          { value: e.deltaY * 5, duration: 500, delay: 0, elasticity: 0 }
+        ],
+        rotate: angle,
+        duration: 500,
+        elasticity: 0,
+        autoplay: false,
+        complete: function() {
+          app.closeCard()
+          app.showNextCard()
+          // TODO make this a animition
+          profilePic.style.boxShadow = '';
 
-        currentCard.style.transform = '';
-        nextCard.style.visibility = '';
-        console.log('Swipe Out Complete')
+          currentCard.style.transform = '';
+          nextCard.style.visibility = '';
+          console.log('Swipe Out Complete')
+        }
+      });
+
+      var resetPositionAnime = anime({
+        targets: currentCard,
+        translateX: [
+          { value: e.deltaX, duration: 0, delay: 0, elasticity: 0 },
+          { value: 0, duration: 300, delay: 0, elasticity: 0 }
+        ],
+        translateY: [
+          { value: e.deltaY, duration: 0, delay: 0, elasticity: 0 },
+          { value: 0, duration: 300, delay: 0, elasticity: 0 }
+        ],
+        rotate: { value: 0, duration: 5 },
+        duration: 300,
+        elasticity: 10,
+        autoplay: false,
+        complete: function() {
+          profilePic.style.boxShadow = '';
+          nextCard.style.visibility = '';
+        }
+      });
+
+      console.log('velocity', e.velocity)
+      console.log('destance', e.distance)
+      console.log('angle', angle)
+      if ((e.velocity > 1 && e.distance > 100) || (angle < 0 && e.distance > 250)) {
+        console.log('Swipe Right');
+        swipeOutAnime.play();
+      } else if ((e.velocity < -1 && e.distance > 100) || (angle > 0 && e.distance > 250)) {
+        console.log('Swipe Left');
+        swipeOutAnime.play();
+      } else {
+        resetPositionAnime.play();
       }
-    });
-
-    var resetPositionAnime = anime({
-      targets: currentCard,
-      translateX: [
-        { value: e.deltaX, duration: 0, delay: 0, elasticity: 0 },
-        { value: 0, duration: 300, delay: 0, elasticity: 0 }
-      ],
-      translateY: [
-        { value: e.deltaY, duration: 0, delay: 0, elasticity: 0 },
-        { value: 0, duration: 300, delay: 0, elasticity: 0 }
-      ],
-      rotate: { value: 0, duration: 5 },
-      duration: 300,
-      elasticity: 10,
-      autoplay: false,
-      complete: function() {
-        profilePic.style.boxShadow = '';
-        nextCard.style.visibility = '';
-      }
-    });
-
-    console.log('velocity', e.velocity)
-    console.log('destance', e.distance)
-    console.log('angle', angle)
-    if ((e.velocity > 1 && e.distance > 100) || (angle < 0 && e.distance > 250)) {
-      console.log('Swipe Right');
-      swipeOutAnime.play();
-    } else if ((e.velocity < -1 && e.distance > 100) || (angle > 0 && e.distance > 250)) {
-      console.log('Swipe Left');
-      swipeOutAnime.play();
-    } else {
-      resetPositionAnime.play();
     }
   })
 
