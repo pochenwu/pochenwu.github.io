@@ -1,3 +1,7 @@
+import Vue from 'vue';
+import Hammer from 'hammerjs';
+import anime from 'animejs';
+
 // Components
 // TODO: need to use table or something equilvalent for the subtitle icons
 Vue.component('profile-card', {
