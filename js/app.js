@@ -18,7 +18,7 @@ Vue.component('profile-card', {
           <h1>{{ card.name }}<span class="font-lighter">, {{ card.age }}</span></h1>
           <div class="profile-basic-info-item">
             <div v-if="card.class === 'work'" class="profile-icon"><i data-feather="briefcase"></i></div>
-            <div v-else-if="card.class === 'education'" class="profile-icon"><i class="icon-graduation" aria-hidden="true" /></div>
+            <div v-else-if="card.class === 'education'" class="profile-icon"><i data-feather="circle"></i></div>
             <div class="profile-title"><h2>{{ card.title }}<span v-if="card.position">, {{ card.position }}</span></h2></div>
           </div>
           <div v-if="card.class === 'eductaion' && card.gpa" class="profile-basic-info-item">
@@ -42,7 +42,7 @@ Vue.component('profile-card', {
     </div>
   `,
   mounted: function () {
-    console.log('should replace icon')
+    console.log('Should replace icon')
     feather.replace()
   }
 })
