@@ -17,11 +17,15 @@ Vue.component('profile-card', {
         <div class="profile-basic-info profile-content-item">
           <h1>{{ card.name }}<span class="font-lighter">, {{ card.age }}</span></h1>
           <div class="profile-basic-info-item">
-            <div class="profile-icon"><i class="fa fa-map-marker" aria-hidden="true" /></div>
+            <div v-if="card.class === 'work'" class="profile-icon"><i data-feather="briefcase"></i></div>
+            <div v-else-if="card.class === 'education'" class="profile-icon"><i class="icon-graduation" aria-hidden="true" /></div>
             <div class="profile-title"><h2>{{ card.title }}<span v-if="card.position">, {{ card.position }}</span></h2></div>
           </div>
+          <div v-if="card.class === 'eductaion' && card.gpa" class="profile-basic-info-item">
+            GPA
+          </div>
           <div class="profile-basic-info-item">
-            <div class="profile-icon"><i class="fa fa-clock-o" aria-hidden="true" /></div>
+            <div class="profile-icon"><i class="icon-calendar" aria-hidden="true" /></div>
             <div><h2> {{ card.date }}</h2></div>
           </div>
         </div>
@@ -36,7 +40,11 @@ Vue.component('profile-card', {
         </div>
       </div>
     </div>
-  `
+  `,
+  mounted: function () {
+    console.log('should replace icon')
+    feather.replace()
+  }
 })
 
 Vue.component('profile', {
@@ -57,50 +65,15 @@ Vue.component('profile', {
 })
 
 // Main app logics
-window.addEventListener('load', function() {
+window.addEventListener('load', function() {feather.replace()
+  feather.replace()
   var isCardOpen = false;
   var app = new Vue({
     el: '#app',
     data: {
       isCardOpen: isCardOpen,
       cardIndex: 0,
-      cards: [
-        { collage: ['./assets/imgs/p1.jpg'],
-          name: 'Po-Chen',
-          age: '23',
-          title: 'University of Texas at Austin',
-          position: "BA, Computer Sciense, 4.00",
-          class: 'education',
-          date: 'May 2018',
-          message: '',
-          bullets: [
-            'Focused on full-stack development for service oriented web apps.',
-            'Built an API-based infrastructure of push notification service using Socket.io.',
-            'Created a full-fledged live messenger system with direct email I/O support.',
-            'Designed comprehensive, responsive, and modulated email templates.',
-            'Prototyped a brand-new mobile experience with Material-UI.',
-            'Maintained and improved database performance.'
-          ],
-        },
-        { collage: ['./assets/imgs/p2.jpg'],
-          name: 'Po-Chen',
-          age: '23',
-          title: 'WizeHire Inc',
-          position: 'Software Engineering Intern',
-          class: 'internship',
-          message: 'Hello World',
-          date: 'May 2017 - Aug 2017'
-        },
-        { collage: ['./assets/imgs/p3.jpg'],
-          name: 'Po-Chen',
-          age: '23',
-          title: 'Studnet Conduct Board',
-          position: 'Member',
-          class: 'activity',
-          message: 'Hello World',
-          date: 'Fall 2017 - Current'
-        },
-      ]
+      cards: data.cards
     },
     methods: {
       showNextCard: function () {
@@ -151,7 +124,7 @@ window.addEventListener('load', function() {
         console.log('Zoom in callback completed.')
       } else {
         // Zoom Out Responsive Resets
-        // BUG this not beign fired
+        // BUG this not beign fired and hieght becomes not responsive
         profilePic.style.transition = 'unset';
         profilePic.style.height = null;
         currentCard.style.boxShadow = null;

@@ -83,7 +83,7 @@ body {
   background-size: cover;
   background-position: center;
   color: #ffffff;
-  transition: height 200ms, width 250ms, border-radius 250ms;
+  transition: height 200ms, width 250ms;
   will-change: height, width, border-radius;
 }
 
@@ -99,7 +99,6 @@ body {
 }
 
 .profile-caption {
-  border-radius: 20px;
   background: linear-gradient(to top, rgba(35,35,35,.65), rgba(0,0,0,0));
   padding: 5.5%;
 }
