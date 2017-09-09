@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import Hammer from 'hammerjs';
 import anime from 'animejs';
+import VueFeatherIcon from 'vue-feather-icon'
+
+Vue.use(VueFeatherIcon)
 
 // Components
 // TODO: need to use table or something equilvalent for the subtitle icons
@@ -21,7 +24,7 @@ Vue.component('profile-card', {
         <div class="profile-basic-info profile-content-item">
           <h1>{{ card.name }}<span class="font-lighter">, {{ card.age }}</span></h1>
           <div class="profile-basic-info-item">
-            <div v-if="card.class === 'work'" class="profile-icon"><i data-feather="briefcase"></i></div>
+            <div v-if="card.class === 'work'" class="profile-icon"><feather-briefcase /></div>
             <div v-else-if="card.class === 'education'" class="profile-icon"><i data-feather="circle"></i></div>
             <div class="profile-title"><h2>{{ card.title }}<span v-if="card.position">, {{ card.position }}</span></h2></div>
           </div>
@@ -45,10 +48,6 @@ Vue.component('profile-card', {
       </div>
     </div>
   `,
-  mounted: function () {
-    console.log('Should replace icon')
-    feather.replace()
-  }
 })
 
 Vue.component('profile', {
