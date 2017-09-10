@@ -89,7 +89,7 @@ Vue.component('bot-nav', {
 Vue.component('match-notice', {
   props: ['isMatch'],
   template: `
-    <div id="match-notice">
+    <div id="match-notice" v-bind:class="{ 'hide-match': !isMatch }">
       <h1>It's a Match?</h1>
       <p>You seemd to have liked Po-Chen.</p>
       <div class="match-avatar">
@@ -106,12 +106,7 @@ Vue.component('match-notice', {
         </button>
       </div>
     </div>
-  `,
-  computed: {
-    matchNoticeToggle: function () {
-      return this.isCardOpen ? this.$el.style.visibility = 'visible' : ''
-    }
-  }
+  `
 })
 
 // Main app logics
@@ -132,12 +127,12 @@ window.addEventListener('load', function() {
           <bot-nav :links="links"></bot-nav>
         </div>
 
-        <match-notice :isMatch:="isMatch"></match-notice>
+        <match-notice :isMatch="isMatch"></match-notice>
       </div>
     `,
     data: {
       isCardOpen: isCardOpen,
-      isMatch: true,
+      isMatch: false,
       cardIndex: 0,
       cards: data.cards,
       links: data.links
@@ -161,7 +156,7 @@ window.addEventListener('load', function() {
         // console.log('Card is now', this.isCardOpen)
       },
       showMatchNotice: function () {
-        mainView.
+        this.isMatch = true
         console.log('It\'s a match!')
       }
     }
