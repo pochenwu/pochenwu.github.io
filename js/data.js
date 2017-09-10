@@ -40,5 +40,9 @@ var data =
       "message": "Hello World",
       "date": "Fall 2017 - Current"
     }
-  ]
+  ],
+  links: {
+    "linkedin": "https://github.com/pochenwu",
+    "github": "https://github.com/pochenwu"
+  }
 }

@@ -11,9 +11,8 @@
 
   <!-- Buttons core css and icons -->
   <link rel="stylesheet" href="css/buttons.css">
-  <link href="https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.css"> -->
-  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.css">
   <!-- App styles -->
   <link rel="stylesheet" type="text/css" href="./css/index.css">
   <link rel="stylesheet" type="text/css" href="./css/queries.css">
@@ -43,13 +42,7 @@
     <div id="shadow-profile"></div>
     <profile :cards="cards" :card-index="cardIndex" :is-card-open="isCardOpen"></profile>
 
-    <div id="bot-nav">
-      <button class="button button-circle button-large bot-nav-item" style="color: #FFBA03"><i class="fa fa-undo"></i></button>
-      <button class="button button-circle button-jumbo bot-nav-item" style="color: #FF5268"><i class="fa fa-times"></i></button>
-      <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1"><i class="fa fa-star"></i></button>
-      <button class="button button-circle button-jumbo bot-nav-item" style="color: #41E9C1"><i class="fa fa-heart"></i></button>
-      <button class="button button-circle button-large bot-nav-item" style="color: #AA51E4"><i class="fa fa-bolt"></i></button>
-    </div>
+    <bot-nav :links="links"></bot-nav>
   </div>
   <script></script>
 </body>
