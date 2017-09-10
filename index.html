@@ -18,6 +18,10 @@
   <link rel="stylesheet" type="text/css" href="./css/queries.css">
   <!-- TypeFace -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <!-- TODO: very slow - pick one  -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100|Henny+Penny" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Cabin+Sketch|Cinzel+Decorative|Fredericka+the+Great|Henny+Penny|Lily+Script+One|Macondo|Miniver|Mountains+of+Christmas|Oleo+Script+Swash+Caps|Playball|Sail|Seaweed+Script" rel="stylesheet"> -->
+  <!-- <link href="https://fonts.googleapis.com/css?family=Allura|Bilbo+Swash+Caps|Dawning+of+a+New+Day|Great+Vibes|Montez|Princess+Sofia|Satisfy" rel="stylesheet"> -->
 
   <!-- js libraries -->
   <script src="https://unpkg.com/vue"></script>
@@ -35,18 +39,6 @@
 
 <body>
   <div id="iphone-wrapper"><img src="./assets/imgs/iPhone6.png" alt="iphone wireframe"></img></div>
-  <div id="app">
-    <div id="top-nav">
-      <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-user"></i></button>
-      <i class="fa fa-google-wallet" style="color: #FD5068; font-size: 2em"></i>
-      <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-comments"></i></button>
-    </div>
-
-    <div id="shadow-profile"></div>
-    <profile :cards="cards" :card-index="cardIndex" :is-card-open="isCardOpen"></profile>
-
-    <bot-nav :links="links"></bot-nav>
-  </div>
-  <script></script>
+  <div id="app"></div>
 </body>
 </html>

@@ -86,13 +86,58 @@ Vue.component('bot-nav', {
   }
 })
 
+Vue.component('match-notice', {
+  props: ['isMatch'],
+  template: `
+    <div id="match-notice">
+      <h1>It's a Match?</h1>
+      <p>You seemd to have liked Po-Chen.</p>
+      <div class="match-avatar">
+        <div class="avatar"></div>
+      </div>
+      <div class="match-button-group">
+        <button class="my-button">
+          <i class="fa fa-comment" aria-hidden="true"></i>
+          <span class="my-button-text">Send Message</span>
+        </button>
+        <button class="my-button">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+          <span class="my-button-text">Play Again</span>
+        </button>
+      </div>
+    </div>
+  `,
+  computed: {
+    matchNoticeToggle: function () {
+      return this.isCardOpen ? this.$el.style.visibility = 'visible' : ''
+    }
+  }
+})
+
 // Main app logics
 window.addEventListener('load', function() {
   var isCardOpen = false;
   var app = new Vue({
     el: '#app',
+    template: `
+      <div id="app">
+        <div id="main-view"  :class="{ 'blur': isMatch }">
+          <div id="top-nav">
+            <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-user"></i></button>
+            <i class="fa fa-google-wallet" style="color: #FD5068; font-size: 2em"></i>
+            <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-comments"></i></button>
+          </div>
+          <div id="shadow-profile"></div>
+          <profile :cards="cards" :card-index="cardIndex" :is-card-open="isCardOpen"></profile>
+          <bot-nav :links="links"></bot-nav>
+        </div>
+
+        <match-notice :isMatch:="isMatch"></match-notice>
+      </div>
+    `,
     data: {
       isCardOpen: isCardOpen,
+      isMatch: true,
       cardIndex: 0,
       cards: data.cards,
       links: data.links
@@ -100,28 +145,36 @@ window.addEventListener('load', function() {
     methods: {
       showNextCard: function () {
         this.cardIndex++;
-        console.log('Show next card', this.cardIndex);
+        if (this.cardIndex === this.cards.length) {
+          this.showMatchNotice()
+        }
+        // console.log('Show next card', this.cardIndex);
       },
       openCard: function () {
         isCardOpen = true;
         this.isCardOpen = isCardOpen;
-        console.log('Card is now', this.isCardOpen)
+        // console.log('Card is now', this.isCardOpen)
       },
       closeCard: function () {
         isCardOpen = false;
         this.isCardOpen = isCardOpen;
-        console.log('Card is now', this.isCardOpen)
+        // console.log('Card is now', this.isCardOpen)
       },
+      showMatchNotice: function () {
+        mainView.
+        console.log('It\'s a match!')
+      }
     }
   })
 
-  // Touch and Animation Control
   // DOM references
+  var mainView = document.getElementById('main-view')
   var profile = document.getElementById('profile')
   var currentCard = document.getElementById('current-card');
   var nextCard = document.getElementById('next-card');
   var profilePic = currentCard.children[0]
 
+  // Touch and Animation Control
   var profilePicTM = new Hammer.Manager(profilePic, {recognizers: [
       // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
       [ Hammer.Tap ],
@@ -137,7 +190,7 @@ window.addEventListener('load', function() {
     // Animation
     // BUG: card open vraibable no changing.
     profilePic.addEventListener('transitionend', function(e) {
-      console.log('Callback', isCardOpen)
+      // console.log('Callback', isCardOpen)
       if (isCardOpen) {
         // Zoom In Responsive Resets
         profilePic.style.transition = 'unset';
@@ -180,11 +233,9 @@ window.addEventListener('load', function() {
 
     if (!isCardOpen) {
       app.openCard()
-      console.log(isCardOpen)
       zoomIn.play()
     } else {
       app.closeCard()
-      console.log(isCardOpen)
       zoomOut.play()
     }
   });
@@ -230,7 +281,7 @@ window.addEventListener('load', function() {
 
           currentCard.style.transform = null;
           nextCard.style.visibility = null;
-          console.log('Swipe Out Complete')
+          // console.log('Swipe Out Complete')
         }
       });
 
@@ -254,14 +305,14 @@ window.addEventListener('load', function() {
         }
       });
 
-      console.log('velocity', e.velocity)
-      console.log('destance', e.distance)
-      console.log('angle', angle)
+      // console.log('velocity', e.velocity)
+      // console.log('destance', e.distance)
+      // console.log('angle', angle)
       if ((e.velocity > 1 && e.distance > 100) || (angle < 0 && e.distance > 250)) {
-        console.log('Swipe Right');
+        // console.log('Swipe Right');
         swipeOutAnime.play();
       } else if ((e.velocity < -1 && e.distance > 100) || (angle > 0 && e.distance > 250)) {
-        console.log('Swipe Left');
+        // console.log('Swipe Left');
         swipeOutAnime.play();
       } else {
         resetPositionAnime.play();
