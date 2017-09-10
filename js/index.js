@@ -1,5 +1,4 @@
 // Components
-// TODO: need to use table or something equilvalent for the subtitle icons
 Vue.component('profile-card', {
   props: ['card', 'isCardOpen'],
   template: `
@@ -17,7 +16,7 @@ Vue.component('profile-card', {
         <div class="profile-basic-info profile-content-item">
           <h1>{{ card.name }}<span class="font-lighter">, {{ card.age }}</span></h1>
           <div class="profile-basic-info-item">
-            <div v-if="card.class === 'work'" class="profile-icon"><i data-feather="briefcase"></i></div>
+            <div v-if="card.class === 'work'" class="profile-icon"><i class="icon-briefcase" aria-hidden="true" /></div>
             <div v-else-if="card.class === 'education'" class="profile-icon"><i class="icon-graduation" aria-hidden="true" /></div>
             <div class="profile-title"><h2>{{ card.title }}<span v-if="card.position">, {{ card.position }}</span></h2></div>
           </div>
@@ -41,10 +40,6 @@ Vue.component('profile-card', {
       </div>
     </div>
   `,
-  mounted: function () {
-    console.log('should replace icon')
-    feather.replace()
-  }
 })
 
 Vue.component('profile', {
@@ -64,16 +59,43 @@ Vue.component('profile', {
   }
 })
 
+Vue.component('bot-nav', {
+  props: ['links'],
+  template: `
+    <div id="bot-nav">
+      <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1" @click="open(links.linkedin)"><i class="fa fa-linkedin"></i></button>
+      <button class="button button-circle button-jumbo bot-nav-item" style="color: #FF5268" @click="nope"><i class="fa fa-times"></i></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #FFBA03" @click="undo"><i class="fa fa-undo"></i></button>
+      <button class="button button-circle button-jumbo bot-nav-item" style="color: #41E9C1" @click="like"><i class="fa fa-heart"></i></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #AA51E4" @click="open(links.github)"><i class="fa fa-git"></i></button>
+    </div>
+  `,
+  methods: {
+    open: function (url) {
+      window.open(url)
+    },
+    nope: function () {
+      console.log('nope')
+    },
+    undo: function () {
+      console.log('undo')
+    },
+    like: function () {
+      console.log('like')
+    }
+  }
+})
+
 // Main app logics
-window.addEventListener('load', function() {feather.replace()
-  feather.replace()
+window.addEventListener('load', function() {
   var isCardOpen = false;
   var app = new Vue({
     el: '#app',
     data: {
       isCardOpen: isCardOpen,
       cardIndex: 0,
-      cards: data.cards
+      cards: data.cards,
+      links: data.links
     },
     methods: {
       showNextCard: function () {
