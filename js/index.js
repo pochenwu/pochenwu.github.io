@@ -174,7 +174,6 @@ window.addEventListener('load', function() {
         if (this.cardIndex === this.cards.length) {
           this.showMatchNotice()
         }
-        // console.log('Show next card', this.cardIndex);
       },
       openCard: function () {
         isCardOpen = true;
@@ -236,27 +235,6 @@ var registerProfileAnimation = function (app, participants) {
     var appDimentionSnapshot = app.$el.getClientRects()[0]
     var profileDimentionSnapshot = profile.getClientRects()[0]
     var snapshots = { appDimentionSnapshot, profileDimentionSnapshot }
-    // Animation
-    // BUG: card open vraibable no changing.
-    profilePic.addEventListener('transitionend', function(e) {
-      // console.log('Callback', isCardOpen)
-      if (app.isCardOpen) {
-        // Zoom In Responsive Resets
-        profilePic.style.transition = 'unset';
-        profilePic.style.height = 'auto';
-        profilePic.style.paddingTop = '100%';
-        console.log('Zoom in callback completed.')
-      } else {
-        // Zoom Out Responsive Resets
-        // BUG this not beign fired and hieght becomes not responsive
-        profilePic.style.transition = 'unset';
-        profilePic.style.height = null;
-        currentCard.style.boxShadow = null;
-        participants.nextCard.style.visibility = null;
-        console.log('Zoom out callback completed.', profilePic.style.height)
-      }
-    })
-
     if (!app.isCardOpen) {
       app.openCard()
       zoomInAnime(participants, snapshots)
@@ -323,56 +301,58 @@ var registerProfileAnimation = function (app, participants) {
 
 // Animation
 var zoomInAnime = function (participants, snapshots, callback = function () {}) {
-    console.log('Zooming in.')
-    anime({
-      targets: participants.profilePic,
-      height: { value: snapshots.appDimentionSnapshot.width, duration: 350, delay: 0, elasticity: 0 },
-      duration: 350,
-      elasticity: 0,
-      easing: 'easeInOutQuart',
-      begin: function () {
-        // Initial state
-        participants.nextCard.style.visibility = "hidden";
-        participants.currentCard.style.borderRadius = 0;
-        participants.currentCard.style.boxShadow = 'none';
-        // Resets
-        participants.profilePic.style.transition = 'unset';
-        // participants.profilePic.style.transition = null;
-      },
-      complete: function () {
-        // TODO make this a animition
-        participants.profilePic.style.boxShadow = null;
-        participants.currentCard.style.transform = null;
-        participants.nextCard.style.visibility = null;
+  console.log('Zooming in.')
+  // Initial state
+  participants.nextCard.style.visibility = "hidden";
+  participants.currentCard.style.borderRadius = 0;
+  participants.currentCard.style.boxShadow = 'none';
+  anime({
+    targets: participants.profilePic,
+    height: { value: snapshots.appDimentionSnapshot.width, duration: 350, delay: 0, elasticity: 0 },
+    duration: 350,
+    elasticity: 0,
+    easing: 'easeOutQuart',
+    complete: function () {
+      // Resets to responsive
+      participants.profilePic.style.boxShadow = null;
+      participants.currentCard.style.transform = null;
+      participants.nextCard.style.visibility = null;
 
-        participants.profilePic.style.height = 'auto';
-        participants.profilePic.style.paddingTop = '100%';
-        callback()
-      }
-    })
-
-
-    // Obejectives
-    // participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
-
-
-
-    // profilePic.style.transition = 'unset';
-    // profilePic.style.height = 'auto';
-    // profilePic.style.paddingTop = '100%';
-    // console.log('Zoom in callback completed.')
+      participants.profilePic.style.height = 'auto';
+      participants.profilePic.style.paddingTop = '100%';
+      callback()
+      console.log('Zooming in completed.')
+    }
+  })
 }
 
-var zoomOutAnime = function (participants, snapshots) {
-    console.log('Zooming out.')
-    // Initial state
-    participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
-    participants.profilePic.style.paddingTop = null;
-    // Resets
-    participants.profilePic.style.transition = null;
-    // Obejectives
-    participants.currentCard.style.borderRadius = null;
-    participants.profilePic.style.height = snapshots.appDimentionSnapshot.height * .79 + 'px';
+var zoomOutAnime = function (participants, snapshots, callback = function () {}) {
+  console.log('Zooming out.')
+  // Initial States
+  participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
+  participants.profilePic.style.paddingTop = '0';
+  participants.nextCard.style.visibility = "hidden";
+  participants.currentCard.style.boxShadow = 'none';
+  participants.currentCard.style.borderRadius = null;
+  anime({
+    targets: participants.profilePic,
+    height: [
+      { value: snapshots.appDimentionSnapshot.width, duration: 0, delay: 0, elasticity: 0 },
+      { value: snapshots.appDimentionSnapshot.height * .79, duration: 350, delay: 0, elasticity: 0 }
+    ],
+    duration: 350,
+    elasticity: 0,
+    easing: 'easeOutQuart',
+    complete: function () {
+      // Resets to responsive
+      participants.currentCard.style.boxShadow = null;
+      participants.currentCard.style.transform = null;
+      participants.nextCard.style.visibility = null;
+      participants.profilePic.style.height = '100%';
+      console.log('Zooming out completed.')
+      callback()
+    }
+  })
 }
 
 var swipeOutAnime = function (participants, deltaX, deltaY, angle, callback) {
@@ -393,8 +373,7 @@ var swipeOutAnime = function (participants, deltaX, deltaY, angle, callback) {
     elasticity: 0,
     // autoplay: false,
     complete: function() {
-      // TODO make this a animition
-      participants.profilePic.style.boxShadow = null;
+      participants.currentCard.style.boxShadow = null;
       participants.currentCard.style.transform = null;
       participants.nextCard.style.visibility = null;
       callback()
@@ -426,7 +405,11 @@ var resetCardAnime = function (participants, deltaX, deltaY, callback) {
 var previewAnimation = function (target, dist, reverse) {
   // Preview animation of the next card
   var dynamicSize = Math.max('.95', Math.min(1, .95 + dist / 1000));
-  target.style.transform = "scale(" + dynamicSize + ")"
+  if (dynamicSize !== 1) {
+    target.style.transform = "scale(" + dynamicSize + ")"
+  } else {
+    target.style.transform = null;
+  }
 }
 
 function getComputedTranslate(coordinate, obj) {

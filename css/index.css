@@ -96,7 +96,6 @@ button:focus {
   background-size: cover;
   background-position: center;
   color: #ffffff;
-  transition: height 200ms, width 250ms;
   will-change: height, width, border-radius;
 }
 
