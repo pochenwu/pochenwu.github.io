@@ -42,7 +42,8 @@ var data =
     }
   ],
   links: {
-    "linkedin": "https://github.com/pochenwu",
+    "email": "pochen@utexas.edu",
+    "linkedin": "https://linkedin.com/in/pochenwu",
     "github": "https://github.com/pochenwu"
   }
 }

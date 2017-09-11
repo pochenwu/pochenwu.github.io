@@ -11,6 +11,10 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
+button:focus {
+  outline: none;
+}
+
  /* TODO webkit user selelct */
 #iphone-wrapper {
   user-select: none;
@@ -243,7 +247,6 @@ body {
 }
 
 #match-notice .my-button:active {
-  outline: none;
   background: white;
   opacity: .7;
   color: black;
@@ -287,4 +290,8 @@ body {
 
 .blur {
   filter: blur(20px);
+}
+
+.hidden {
+  visibility: hidden;
 }

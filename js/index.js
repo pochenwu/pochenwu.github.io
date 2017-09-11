@@ -48,12 +48,10 @@ Vue.component('profile', {
     <div id="profile" :style="profileModalToggle">
       <profile-card v-if="cardIndex + 1 < cards.length" :card="cards[cardIndex + 1]" :is-card-open="false" id="next-card"></profile-card>
       <profile-card v-if="cardIndex < cards.length" :card="cards[cardIndex]" :is-card-open=isCardOpen id="current-card"></profile-card>
-      <div v-if="cardIndex === cards.length">There is no more card. It's a match? ;)</div>
     </div>
   `,
   computed: {
     profileModalToggle: function () {
-      // return  this.isCardOpen ? { position: 'static' } : { position: 'relative' };
       return this.isCardOpen ? { marginLeft : 0, marginRight: 0, top: 0, width: '100%', height: '100%' } : {}
     }
   }
@@ -87,7 +85,7 @@ Vue.component('bot-nav', {
 })
 
 Vue.component('match-notice', {
-  props: ['isMatch'],
+  props: ['isMatch', 'resetApp', 'sendMessage'],
   template: `
     <div id="match-notice" v-bind:class="{ 'hide-match': !isMatch }">
       <h1>It's a Match?</h1>
@@ -96,11 +94,11 @@ Vue.component('match-notice', {
         <div class="avatar"></div>
       </div>
       <div class="match-button-group">
-        <button class="my-button">
+        <button class="my-button" @click="sendMessage">
           <i class="fa fa-comment" aria-hidden="true"></i>
           <span class="my-button-text">Send Message</span>
         </button>
-        <button class="my-button">
+        <button class="my-button" @click="resetApp">
           <i class="fa fa-refresh" aria-hidden="true"></i>
           <span class="my-button-text">Play Again</span>
         </button>
@@ -118,16 +116,20 @@ window.addEventListener('load', function() {
       <div id="app">
         <div id="main-view"  :class="{ 'blur': isMatch }">
           <div id="top-nav">
-            <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-user"></i></button>
+            <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6">
+              <i class="fa fa-user"></i>
+            </button>
             <i class="fa fa-google-wallet" style="color: #FD5068; font-size: 2em"></i>
-            <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6"><i class="fa fa-comments"></i></button>
+            <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6" @click="sendMessage">
+              <i class="fa fa-comments"></i>
+            </button>
           </div>
           <div id="shadow-profile"></div>
           <profile :cards="cards" :card-index="cardIndex" :is-card-open="isCardOpen"></profile>
           <bot-nav :links="links"></bot-nav>
         </div>
 
-        <match-notice :isMatch="isMatch"></match-notice>
+        <match-notice :isMatch="isMatch" :resetApp="resetApp" :sendMessage="sendMessage"></match-notice>
       </div>
     `,
     data: {
@@ -158,10 +160,22 @@ window.addEventListener('load', function() {
       showMatchNotice: function () {
         this.isMatch = true
         console.log('It\'s a match!')
+      },
+      resetApp: function () {
+        isCardOpen = false;
+        this.isCardOpen = isCardOpen;
+        this.cardIndex = 0;
+        this.isMatch = 0;
+      },
+      sendMessage: function () {
+        window.location.href = 'mailto:' + this.links.email
       }
     }
   })
+  registerProfileAnimation(app)
+})
 
+var registerProfileAnimation = function (app) {
   // DOM references
   var mainView = document.getElementById('main-view')
   var profile = document.getElementById('profile')
@@ -186,7 +200,7 @@ window.addEventListener('load', function() {
     // BUG: card open vraibable no changing.
     profilePic.addEventListener('transitionend', function(e) {
       // console.log('Callback', isCardOpen)
-      if (isCardOpen) {
+      if (app.isCardOpen) {
         // Zoom In Responsive Resets
         profilePic.style.transition = 'unset';
         profilePic.style.height = 'auto';
@@ -226,7 +240,7 @@ window.addEventListener('load', function() {
       }
     }
 
-    if (!isCardOpen) {
+    if (!app.isCardOpen) {
       app.openCard()
       zoomIn.play()
     } else {
@@ -236,7 +250,7 @@ window.addEventListener('load', function() {
   });
 
   profilePicTM.on("panmove", function(e) {
-    if (!isCardOpen) {
+    if (!app.isCardOpen) {
       // Adjust the degree so we have 0deg pointing South.
       // Convert to radians and use the Sine function to neutralize
       // negative degrees as well as manage magnitude
@@ -250,7 +264,7 @@ window.addEventListener('load', function() {
   });
 
   profilePicTM.on("panend", function(e) {
-    if (!isCardOpen) {
+    if (!app.isCardOpen) {
       var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
       // TODO: use edge coordinates instead of arbitrary values.
       // TODO: change duration based on velocity.
@@ -328,10 +342,10 @@ window.addEventListener('load', function() {
   });
 
   observer.observe(currentCard, { attributes : true, attributeFilter : ['style'] });
-})
+}
 
 
-var previewAnimation = function(target, dist, reverse) {
+var previewAnimation = function (target, dist, reverse) {
   // Preview animation of the next card
   var dynamicSize = Math.max('.95', Math.min(1, .95 + dist / 1000));
   target.style.transform = "scale(" + dynamicSize + ")"
