@@ -66,6 +66,11 @@ Vue.component('profile', {
 
 Vue.component('bot-nav', {
   props: ['links', 'participants', 'closeCard', 'showNextCard', 'showMatchNotice'],
+  data: function () {
+    return {
+      inAction: false
+    }
+  },
   template: `
     <div id="bot-nav">
       <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1" @click="open(links.linkedin)"><i class="fa fa-linkedin"></i></button>
@@ -80,22 +85,31 @@ Vue.component('bot-nav', {
       window.open(url)
     },
     next: function () {
-      this.closeCard()
-      swipeOutAnime(this.participants, -85, 0, 5, () => {
-        this.showNextCard()
-      });
+      console.log('next')
+      if (!this.inAction) {
+        this.inAction = true;
+        this.closeCard()
+        swipeOutAnime(this.participants, -85, 0, 5, () => {
+          this.showNextCard()
+          this.inAction = false
+        });
+      }
     },
     undo: function () {
       console.log('undo')
     },
     like: function () {
-      this.closeCard()
-      // TODO: delta x needs to commodate responsive sizes
-      swipeOutAnime(this.participants, 85, 0, 5, () => {
-        this.showNextCard()
-        this.showMatchNotice()
-      });
       console.log('like')
+      if (!this.inAction) {
+        this.inAction = true;
+        this.closeCard()
+        // TODO: delta x needs to commodate responsive sizes
+        swipeOutAnime(this.participants, 85, 0, 5, () => {
+          this.showNextCard()
+          this.showMatchNotice()
+          this.inAction = false;
+        });
+      }
     }
   }
 })
