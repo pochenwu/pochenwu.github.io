@@ -119,6 +119,8 @@ window.addEventListener('load', function() {
     el: '#app',
     template: `
       <div id="app">
+        <match-notice :isMatch="isMatch" :resetApp="resetApp" :sendMessage="sendMessage"></match-notice>
+        
         <div id="main-view"  :class="{ 'blur': isMatch }">
           <div id="top-nav">
             <button class="button button-plain button-borderless button-large top-nav-item" style="color: #DADFE6">
@@ -133,8 +135,6 @@ window.addEventListener('load', function() {
           <profile :cards="cards" :card-index="cardIndex" :is-card-open="isCardOpen"></profile>
           <bot-nav :links="links"></bot-nav>
         </div>
-
-        <match-notice :isMatch="isMatch" :resetApp="resetApp" :sendMessage="sendMessage"></match-notice>
       </div>
     `,
     data: {
@@ -264,7 +264,7 @@ var registerProfileAnimation = function (app) {
       currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
       currentCard.style.boxShadow = 'none';
 
-      // To prevent last card showing 
+      // To prevent last card showing
       if (app.cardIndex + 1 < app.cards.length) {
         nextCard.style.visibility = "visible";
       }

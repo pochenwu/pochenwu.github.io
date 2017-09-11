@@ -202,7 +202,8 @@ button:focus {
   color: white;
   flex-direction: column;
   display: flex;
-  align-items: center;¥
+  align-items: center;
+  z-index: 1;
 }
 
 #match-notice h1 {
