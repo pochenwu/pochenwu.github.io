@@ -163,10 +163,6 @@ button:focus {
   -webkit-padding-start: 1.25em;
 }
 
-#next-card {
-  visibility: hidden;
-}
-
 #bot-nav {
   display: flex;
   justify-content: space-between;
@@ -233,7 +229,6 @@ button:focus {
   height: 7em;
   border: 2px solid white;
   border-radius: 7em;
-  background-image: url('../assets/imgs/p1.jpg');
   background-position: center;
   background-size: cover;
 }
@@ -256,9 +251,14 @@ button:focus {
   color: black;
 }
 
+#match-notice .my-button:hover {
+  opacity: .7;
+}
+
 #match-notice .my-button i {
   font-size: 1.5em;
   margin-right: .1em;
+  vertical-align: text-bottom;
 }
 
 .match-button-group {
