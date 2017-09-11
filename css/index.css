@@ -17,11 +17,12 @@ button:focus {
   outline: none;
 }
 
- /* TODO webkit user selelct */
+ /* TODO webkit user selelctor
+    TODO Use display: none. */
 #iphone-wrapper {
   user-select: none;
   position: absolute;
-  visibility: hidden;
+  display: none;
 }
 
 #app {
