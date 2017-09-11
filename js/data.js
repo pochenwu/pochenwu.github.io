@@ -17,7 +17,7 @@ var data =
     },
     {
       "title": "WizeHire Inc",
-      "collage": ["./assets/imgs/p2.jpg"],
+      "collage": ["./assets/imgs/yosemite.jpg"],
       "name": "Po-Chen",
       "age": "23",
       "position": "Software Engineering Intern",
@@ -35,7 +35,7 @@ var data =
     },
     {
       "title": "UT Austin Sanger Learning Center",
-      "collage": ["./assets/imgs/army.jpg"],
+      "collage": ["./assets/imgs/kids.jpg"],
       "name": "Po-Chen",
       "age": "23",
       "position": "Tutor",
@@ -64,7 +64,7 @@ var data =
     },
     {
       "title": "Studnet Conduct Board",
-      "collage": ["./assets/imgs/p3.jpg"],
+      "collage": ["./assets/imgs/eiffel.jpg"],
       "name": "Po-Chen",
       "age": "23",
       "position": "Board Member",
@@ -92,7 +92,7 @@ var data =
     },
     {
       "title": "Phi Betta Kappa",
-      "collage": ["./assets/imgs/honors.jpg"],
+      "collage": ["./assets/imgs/artistic.jpg"],
       "name": "Po-Chen",
       "age": "23",
       "position": "Junior Member",
