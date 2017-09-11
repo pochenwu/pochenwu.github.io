@@ -322,16 +322,45 @@ var registerProfileAnimation = function (app, participants) {
 }
 
 // Animation
-var zoomInAnime = function (participants, snapshots) {
+var zoomInAnime = function (participants, snapshots, callback = function () {}) {
     console.log('Zooming in.')
-    // Initial state
-    participants.nextCard.style.visibility = "hidden";
-    // Resets
-    participants.profilePic.style.transition = null;
+    anime({
+      targets: participants.profilePic,
+      height: { value: snapshots.appDimentionSnapshot.width, duration: 350, delay: 0, elasticity: 0 },
+      duration: 350,
+      elasticity: 0,
+      easing: 'easeInOutQuart',
+      begin: function () {
+        // Initial state
+        participants.nextCard.style.visibility = "hidden";
+        participants.currentCard.style.borderRadius = 0;
+        participants.currentCard.style.boxShadow = 'none';
+        // Resets
+        participants.profilePic.style.transition = 'unset';
+        // participants.profilePic.style.transition = null;
+      },
+      complete: function () {
+        // TODO make this a animition
+        participants.profilePic.style.boxShadow = null;
+        participants.currentCard.style.transform = null;
+        participants.nextCard.style.visibility = null;
+
+        participants.profilePic.style.height = 'auto';
+        participants.profilePic.style.paddingTop = '100%';
+        callback()
+      }
+    })
+
+
     // Obejectives
-    participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
-    participants.currentCard.style.borderRadius = 0;
-    participants.currentCard.style.boxShadow = 'none';
+    // participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
+
+
+
+    // profilePic.style.transition = 'unset';
+    // profilePic.style.height = 'auto';
+    // profilePic.style.paddingTop = '100%';
+    // console.log('Zoom in callback completed.')
 }
 
 var zoomOutAnime = function (participants, snapshots) {
