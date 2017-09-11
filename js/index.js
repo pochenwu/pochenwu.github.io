@@ -3,11 +3,11 @@ Vue.component('profile-card', {
   props: ['card', 'isCardOpen'],
   template: `
     <div class="profile-card" :class="{ 'profile-card-open': isCardOpen }">
-      <div :style="{ backgroundImage: 'url(' + card.collage[0] + ')' }"
+      <div :style="{ backgroundImage: url }"
         class="profile-pic"
         :class="{ 'profile-pic-open': isCardOpen }"
       >
-        <div v-if="!isCardOpen" class="profile-caption">
+        <div v-if="card && !isCardOpen" class="profile-caption">
           <h1>{{ card.name }}, {{ card.age }}</h1>
           <h2>{{ card.title }}</h2>
         </div>
@@ -40,14 +40,19 @@ Vue.component('profile-card', {
       </div>
     </div>
   `,
+  computed: {
+    url: function () {
+      return this.card ? 'url(' + this.card.collage[0] + ')' : ''
+    }
+  }
 })
 
 Vue.component('profile', {
   props: ['cards', 'cardIndex', 'isCardOpen'],
   template: `
     <div id="profile" :style="profileModalToggle">
-      <profile-card v-if="cardIndex + 1 < cards.length" :card="cards[cardIndex + 1]" :is-card-open="false" id="next-card"></profile-card>
-      <profile-card v-if="cardIndex < cards.length" :card="cards[cardIndex]" :is-card-open=isCardOpen id="current-card"></profile-card>
+      <profile-card :class="{ 'hidden': !(cardIndex + 1 < cards.length) }" :card="cards[cardIndex + 1]" :is-card-open="false" id="next-card"></profile-card>
+      <profile-card :class="{ 'hidden': !(cardIndex < cards.length) }" :card="cards[cardIndex]" :is-card-open=isCardOpen id="current-card"></profile-card>
     </div>
   `,
   computed: {
@@ -259,7 +264,10 @@ var registerProfileAnimation = function (app) {
       currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
       currentCard.style.boxShadow = 'none';
 
-      nextCard.style.visibility = "visible";
+      // To prevent last card showing 
+      if (app.cardIndex + 1 < app.cards.length) {
+        nextCard.style.visibility = "visible";
+      }
     }
   });
 
