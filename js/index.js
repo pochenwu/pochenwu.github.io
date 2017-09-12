@@ -2,11 +2,19 @@
 Vue.component('profile-card', {
   props: ['card', 'isCardOpen'],
   template: `
-    <div class="profile-card" :class="{ 'profile-card-open': isCardOpen }">
+    <div class="profile-card">
       <div :style="{ backgroundImage: url }"
         class="profile-pic"
-        :class="{ 'profile-pic-open': isCardOpen }"
       >
+        <div class="stamp">
+          LIKE
+        </div>
+        <div v-if="card && isCardOpen" class="profile-control-group">
+          <div class="collage-scroll"></div>
+          <button class="button button-circle button-medium bot-nav-item" style="box-shadow: 0px 1px 1px #333333; color: #FF5268" >
+            <i class="fa fa-arrow-down" aria-hidden="true" />
+          </button>
+        </div>
         <div v-if="card && !isCardOpen" class="profile-caption">
           <h1>{{ card.name }}, {{ card.age }}</h1>
           <h2>{{ card.title }}</h2>
@@ -66,13 +74,18 @@ Vue.component('profile', {
 
 Vue.component('bot-nav', {
   props: ['links', 'participants', 'closeCard', 'showNextCard', 'showMatchNotice'],
+  data: function () {
+    return {
+      inAction: false
+    }
+  },
   template: `
     <div id="bot-nav">
-      <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1" @click="open(links.linkedin)"><i class="fa fa-linkedin"></i></button>
-      <button class="button button-circle button-jumbo bot-nav-item" style="color: #FF5268" @click="next"><i class="fa fa-times"></i></button>
-      <button class="button button-circle button-large bot-nav-item" style="color: #FFBA03" @click="undo"><i class="fa fa-undo"></i></button>
-      <button class="button button-circle button-jumbo bot-nav-item" style="color: #41E9C1" @click="like"><i class="fa fa-heart"></i></button>
-      <button class="button button-circle button-large bot-nav-item" style="color: #AA51E4" @click="open(links.github)"><i class="fa fa-git"></i></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1" @click="open(links.linkedin)"><i class="fa fa-linkedin" /></button>
+      <button class="button button-circle button-jumbo bot-nav-item" style="color: #FF5268" @click="next"><i class="fa fa-times" /></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #FFBA03" @click="undo"><i class="fa fa-undo" /></button>
+      <button class="button button-circle button-jumbo bot-nav-item" style="color: #41E9C1" @click="like"><i class="fa fa-heart" /></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #AA51E4" @click="open(links.github)"><i class="fa fa-git" /></button>
     </div>
   `,
   methods: {
@@ -80,22 +93,31 @@ Vue.component('bot-nav', {
       window.open(url)
     },
     next: function () {
-      this.closeCard()
-      swipeOutAnime(this.participants, -85, 0, 5, () => {
-        this.showNextCard()
-      });
+      console.log('next')
+      if (!this.inAction) {
+        this.inAction = true;
+        this.closeCard()
+        swipeOutAnime(this.participants, -85, 0, 5, () => {
+          this.showNextCard()
+          this.inAction = false
+        });
+      }
     },
     undo: function () {
       console.log('undo')
     },
     like: function () {
-      this.closeCard()
-      // TODO: delta x needs to commodate responsive sizes
-      swipeOutAnime(this.participants, 85, 0, 5, () => {
-        this.showNextCard()
-        this.showMatchNotice()
-      });
       console.log('like')
+      if (!this.inAction) {
+        this.inAction = true;
+        this.closeCard()
+        // TODO: delta x needs to commodate responsive sizes
+        swipeOutAnime(this.participants, 85, 0, 5, () => {
+          this.showNextCard()
+          this.showMatchNotice()
+          this.inAction = false;
+        });
+      }
     }
   }
 })
@@ -174,7 +196,6 @@ window.addEventListener('load', function() {
         if (this.cardIndex === this.cards.length) {
           this.showMatchNotice()
         }
-        // console.log('Show next card', this.cardIndex);
       },
       openCard: function () {
         isCardOpen = true;
@@ -236,27 +257,6 @@ var registerProfileAnimation = function (app, participants) {
     var appDimentionSnapshot = app.$el.getClientRects()[0]
     var profileDimentionSnapshot = profile.getClientRects()[0]
     var snapshots = { appDimentionSnapshot, profileDimentionSnapshot }
-    // Animation
-    // BUG: card open vraibable no changing.
-    profilePic.addEventListener('transitionend', function(e) {
-      // console.log('Callback', isCardOpen)
-      if (app.isCardOpen) {
-        // Zoom In Responsive Resets
-        profilePic.style.transition = 'unset';
-        profilePic.style.height = 'auto';
-        profilePic.style.paddingTop = '100%';
-        console.log('Zoom in callback completed.')
-      } else {
-        // Zoom Out Responsive Resets
-        // BUG this not beign fired and hieght becomes not responsive
-        profilePic.style.transition = 'unset';
-        profilePic.style.height = null;
-        currentCard.style.boxShadow = null;
-        participants.nextCard.style.visibility = null;
-        console.log('Zoom out callback completed.', profilePic.style.height)
-      }
-    })
-
     if (!app.isCardOpen) {
       app.openCard()
       zoomInAnime(participants, snapshots)
@@ -271,7 +271,10 @@ var registerProfileAnimation = function (app, participants) {
       // Adjust the degree so we have 0deg pointing South.
       // Convert to radians and use the Sine function to neutralize
       // negative degrees as well as manage magnitude
-      var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
+      var appDimentionSnapshot = app.$el.getClientRects()[0]
+      var percentageDelta = Math.abs(e.deltaX / appDimentionSnapshot.width + e.deltaY / appDimentionSnapshot.height);
+      var angle = -Math.sin((e.angle - 90) * Math.PI / 180) * percentageDelta * 8;
+      console.log(e.angle, angle, percentageDelta)
       // This is the rotate and follow animation. Using pure CSS ensure the
       // most responsive user experience
       currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
@@ -314,7 +317,13 @@ var registerProfileAnimation = function (app, participants) {
       var translateX = getComputedTranslate('X', mutationRecord.target);
       var translateY = getComputedTranslate('Y', mutationRecord.target);
       var dist = Math.sqrt( translateX * translateX + translateY * translateY);
-      previewAnimation(nextCard, dist)
+      previewAnimation(nextCard, dist);
+
+      // TODO: might need a better way to reach the element
+      var appDimentionSnapshot = app.$el.getClientRects()[0]
+      var stamp = currentCard.children[0].children[0]
+      var percentageDelta = Math.abs(translateX / appDimentionSnapshot.width + translateY / appDimentionSnapshot.height);
+      stamp.style.opacity = percentageDelta * 2;
     });
   });
 
@@ -322,28 +331,59 @@ var registerProfileAnimation = function (app, participants) {
 }
 
 // Animation
-var zoomInAnime = function (participants, snapshots) {
-    console.log('Zooming in.')
-    // Initial state
-    participants.nextCard.style.visibility = "hidden";
-    // Resets
-    participants.profilePic.style.transition = null;
-    // Obejectives
-    participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
-    participants.currentCard.style.borderRadius = 0;
-    participants.currentCard.style.boxShadow = 'none';
+var zoomInAnime = function (participants, snapshots, callback = function () {}) {
+  console.log('Zooming in.')
+  // Initial state
+  participants.nextCard.style.visibility = "hidden";
+  participants.currentCard.style.borderRadius = 0;
+  participants.currentCard.style.boxShadow = 'none';
+  anime({
+    targets: participants.profilePic,
+    height: { value: snapshots.appDimentionSnapshot.width, duration: 350, delay: 0, elasticity: 0 },
+    duration: 350,
+    elasticity: 0,
+    easing: 'easeOutQuart',
+    complete: function () {
+      // Resets to responsive
+      participants.profilePic.style.boxShadow = null;
+      participants.currentCard.style.transform = null;
+      participants.nextCard.style.visibility = null;
+
+      participants.profilePic.style.height = 'auto';
+      participants.profilePic.style.paddingTop = '100%';
+      callback()
+      console.log('Zooming in completed.')
+    }
+  })
 }
 
-var zoomOutAnime = function (participants, snapshots) {
-    console.log('Zooming out.')
-    // Initial state
-    participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
-    participants.profilePic.style.paddingTop = null;
-    // Resets
-    participants.profilePic.style.transition = null;
-    // Obejectives
-    participants.currentCard.style.borderRadius = null;
-    participants.profilePic.style.height = snapshots.appDimentionSnapshot.height * .79 + 'px';
+var zoomOutAnime = function (participants, snapshots, callback = function () {}) {
+  console.log('Zooming out.')
+  // Initial States
+  participants.profilePic.style.height = snapshots.appDimentionSnapshot.width + 'px';
+  participants.profilePic.style.paddingTop = '0';
+  participants.nextCard.style.visibility = "hidden";
+  participants.currentCard.style.boxShadow = 'none';
+  participants.currentCard.style.borderRadius = null;
+  anime({
+    targets: participants.profilePic,
+    height: [
+      { value: snapshots.appDimentionSnapshot.width, duration: 0, delay: 0, elasticity: 0 },
+      { value: snapshots.appDimentionSnapshot.height * .79, duration: 350, delay: 0, elasticity: 0 }
+    ],
+    duration: 350,
+    elasticity: 0,
+    easing: 'easeOutQuart',
+    complete: function () {
+      // Resets to responsive
+      participants.currentCard.style.boxShadow = null;
+      participants.currentCard.style.transform = null;
+      participants.nextCard.style.visibility = null;
+      participants.profilePic.style.height = '100%';
+      console.log('Zooming out completed.')
+      callback()
+    }
+  })
 }
 
 var swipeOutAnime = function (participants, deltaX, deltaY, angle, callback) {
@@ -364,8 +404,7 @@ var swipeOutAnime = function (participants, deltaX, deltaY, angle, callback) {
     elasticity: 0,
     // autoplay: false,
     complete: function() {
-      // TODO make this a animition
-      participants.profilePic.style.boxShadow = null;
+      participants.currentCard.style.boxShadow = null;
       participants.currentCard.style.transform = null;
       participants.nextCard.style.visibility = null;
       callback()
@@ -397,7 +436,11 @@ var resetCardAnime = function (participants, deltaX, deltaY, callback) {
 var previewAnimation = function (target, dist, reverse) {
   // Preview animation of the next card
   var dynamicSize = Math.max('.95', Math.min(1, .95 + dist / 1000));
-  target.style.transform = "scale(" + dynamicSize + ")"
+  if (dynamicSize !== 1) {
+    target.style.transform = "scale(" + dynamicSize + ")"
+  } else {
+    target.style.transform = null;
+  }
 }
 
 function getComputedTranslate(coordinate, obj) {
