@@ -2,11 +2,19 @@
 Vue.component('profile-card', {
   props: ['card', 'isCardOpen'],
   template: `
-    <div class="profile-card" :class="{ 'profile-card-open': isCardOpen }">
+    <div class="profile-card">
       <div :style="{ backgroundImage: url }"
         class="profile-pic"
-        :class="{ 'profile-pic-open': isCardOpen }"
       >
+        <div class="stamp">
+          LIKE
+        </div>
+        <div v-if="card && isCardOpen" class="profile-control-group">
+          <div class="collage-scroll"></div>
+          <button class="button button-circle button-medium bot-nav-item" style="box-shadow: 0px 1px 1px #333333; color: #FF5268" >
+            <i class="fa fa-arrow-down" aria-hidden="true" />
+          </button>
+        </div>
         <div v-if="card && !isCardOpen" class="profile-caption">
           <h1>{{ card.name }}, {{ card.age }}</h1>
           <h2>{{ card.title }}</h2>
@@ -73,11 +81,11 @@ Vue.component('bot-nav', {
   },
   template: `
     <div id="bot-nav">
-      <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1" @click="open(links.linkedin)"><i class="fa fa-linkedin"></i></button>
-      <button class="button button-circle button-jumbo bot-nav-item" style="color: #FF5268" @click="next"><i class="fa fa-times"></i></button>
-      <button class="button button-circle button-large bot-nav-item" style="color: #FFBA03" @click="undo"><i class="fa fa-undo"></i></button>
-      <button class="button button-circle button-jumbo bot-nav-item" style="color: #41E9C1" @click="like"><i class="fa fa-heart"></i></button>
-      <button class="button button-circle button-large bot-nav-item" style="color: #AA51E4" @click="open(links.github)"><i class="fa fa-git"></i></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #11B1F1" @click="open(links.linkedin)"><i class="fa fa-linkedin" /></button>
+      <button class="button button-circle button-jumbo bot-nav-item" style="color: #FF5268" @click="next"><i class="fa fa-times" /></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #FFBA03" @click="undo"><i class="fa fa-undo" /></button>
+      <button class="button button-circle button-jumbo bot-nav-item" style="color: #41E9C1" @click="like"><i class="fa fa-heart" /></button>
+      <button class="button button-circle button-large bot-nav-item" style="color: #AA51E4" @click="open(links.github)"><i class="fa fa-git" /></button>
     </div>
   `,
   methods: {
@@ -263,7 +271,10 @@ var registerProfileAnimation = function (app, participants) {
       // Adjust the degree so we have 0deg pointing South.
       // Convert to radians and use the Sine function to neutralize
       // negative degrees as well as manage magnitude
-      var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
+      var appDimentionSnapshot = app.$el.getClientRects()[0]
+      var percentageDelta = Math.abs(e.deltaX / appDimentionSnapshot.width + e.deltaY / appDimentionSnapshot.height);
+      var angle = -Math.sin((e.angle - 90) * Math.PI / 180) * percentageDelta * 8;
+      console.log(e.angle, angle, percentageDelta)
       // This is the rotate and follow animation. Using pure CSS ensure the
       // most responsive user experience
       currentCard.style.transform = "rotate(" + angle + "deg) translate(" + e.deltaX + "px," + e.deltaY + "px)";
@@ -306,7 +317,13 @@ var registerProfileAnimation = function (app, participants) {
       var translateX = getComputedTranslate('X', mutationRecord.target);
       var translateY = getComputedTranslate('Y', mutationRecord.target);
       var dist = Math.sqrt( translateX * translateX + translateY * translateY);
-      previewAnimation(nextCard, dist)
+      previewAnimation(nextCard, dist);
+
+      // TODO: might need a better way to reach the element
+      var appDimentionSnapshot = app.$el.getClientRects()[0]
+      var stamp = currentCard.children[0].children[0]
+      var percentageDelta = Math.abs(translateX / appDimentionSnapshot.width + translateY / appDimentionSnapshot.height);
+      stamp.style.opacity = percentageDelta * 2;
     });
   });
 
