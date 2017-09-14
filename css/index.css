@@ -289,10 +289,6 @@ button:focus {
   flex-direction: column;
 }
 
-.my-button-text {
-
-}
-
 /* Animation for Match Notice */
 .hide-match {
   visibility: hidden;

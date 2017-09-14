@@ -123,7 +123,7 @@ Vue.component('bot-nav', {
 })
 
 Vue.component('match-notice', {
-  props: ['profileImgSrc', 'isMatch', 'resetApp', 'sendMessage', 'closeMatchNotice'],
+  props: ['profileImgSrc', 'isMatch', 'resetApp', 'sendMessage', 'closeMatchNotice', 'isEnd'],
   template: `
     <div id="match-notice" v-bind:class="{ 'hide-match': !isMatch }">
       <h1>It's a Match?</h1>
@@ -136,7 +136,7 @@ Vue.component('match-notice', {
           <i class="fa fa-comment" aria-hidden="true"></i>
           <span class="my-button-text">Send Message</span>
         </button>
-        <button class="my-button" @click="closeMatchNotice">
+        <button class="my-button" @click="closeMatchNotice" :class="{ 'hidden' : isEnd }">
           <i class="fa fa-address-book-o" aria-hidden="true"></i>
           <span class="my-button-text">Keep Playing</span>
         </button>
@@ -161,7 +161,8 @@ window.addEventListener('load', function() {
           :resetApp="resetApp"
           :sendMessage="sendMessage"
           :closeMatchNotice="closeMatchNotice"
-          :profileImgSrc="lastProfileImgSrc">
+          :profileImgSrc="lastProfileImgSrc"
+          :isEnd="isEnd">
         </match-notice>
         <div id="main-view"  :class="{ 'blur': isMatch }">
           <div id="top-nav">
@@ -222,6 +223,11 @@ window.addEventListener('load', function() {
       },
       sendMessage: function () {
         window.location.href = 'mailto:' + this.links.email
+      }
+    },
+    computed: {
+      isEnd: function () {
+        return this.cardIndex === this.cards.length
       }
     },
     mounted: function () {
@@ -289,10 +295,13 @@ var registerProfileAnimation = function (app, participants) {
 
   profilePicTM.on("panend", function(e) {
     if (!app.isCardOpen) {
+      var appDimentionSnapshot = app.$el.getClientRects()[0]
+      var percentageDelta = Math.abs(e.deltaX / appDimentionSnapshot.width + e.deltaY / appDimentionSnapshot.height);
       var angle = Math.sin((e.angle - 90) * Math.PI / 180) * 2;
       // console.log('velocity', e.velocity)
-      // console.log('destance', e.distance)
+      console.log('destance', e.distance)
       // console.log('angle', angle)
+      console.log('percentage delta', percentageDelta)
       if ((e.velocity > 1 && e.distance > 100) || (angle < 0 && e.distance > 250)) {
         // console.log('Swipe Right');
         swipeOutAnime(participants, e.deltaX, e.deltaY, angle, () => {
