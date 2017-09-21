@@ -126,10 +126,10 @@ Vue.component('match-notice', {
   props: ['profileImgSrc', 'isMatch', 'resetApp', 'sendMessage', 'closeMatchNotice', 'isEnd'],
   template: `
     <div id="match-notice" v-bind:class="{ 'hide-match': !isMatch }">
-      <h1>It's a Match?</h1>
-      <p>You seemd to have liked Po-Chen.</p>
-      <div class="match-avatar">
-        <div class="avatar" :style="{ backgroundImage: 'url(' + profileImgSrc + ')' }"></div>
+      <div class="match-info">
+        <h1>It's a Match?</h1>
+        <p>You seemd to have liked Po-Chen.</p>
+        <div class="avatar center" :style="{ backgroundImage: 'url(' + profileImgSrc + ')' }"></div>
       </div>
       <div class="match-button-group">
         <button class="my-button" @click="sendMessage">
@@ -140,11 +140,11 @@ Vue.component('match-notice', {
           <i class="fa fa-address-book-o" aria-hidden="true"></i>
           <span class="my-button-text">Keep Playing</span>
         </button>
+        <button class="my-button" @click="resetApp" style="border: none; margin: 5%; margin-top: auto">
+          <i class="fa fa-repeat" aria-hidden="true"></i>
+          <span class="my-button-text">Replay</span>
+        </button>
       </div>
-      <button class="my-button" @click="resetApp" style="width: 75%; border: none; margin: 5%; margin-top: auto;">
-        <i class="fa fa-repeat" aria-hidden="true"></i>
-        <span class="my-button-text">Replay</span>
-      </button>
     </div>
   `
 })
